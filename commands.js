@@ -129,6 +129,10 @@ const commands = {
             // Otomatik olarak Spring Boot uygulamasını başlat
             writeLine('docker run -d springapp');
             await commands.docker(['run', '-d', 'springapp']);
+
+
+            writeLine('docker run -d goapp');
+            await commands.docker(['run', '-d', 'goapp']);
             return;
         }
 
@@ -140,7 +144,6 @@ const commands = {
             }
 
             if (args[2] === 'springapp') {
-                // Spring Boot başlatma çıktılarında timestamp güncelleme
                 const startTime = getCurrentTimestamp();
                 writeLine('Creating Spring Boot container...');
                 await simulateLoading('Starting container ', 300);
@@ -156,60 +159,52 @@ const commands = {
                 writeLine(' :: Spring Boot ::                (v3.4.1)');
                 await new Promise(r => setTimeout(r, 300));
 
-                writeLine(`\n${getCurrentTimestamp()}  INFO 1 --- [           main] c.s.UserServiceApplication               : Starting UserServiceApplication v1.0.0`);
-                await new Promise(r => setTimeout(r, 300));
+                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.s.UserServiceApplication               : Starting UserServiceApplication v1.0.0`);
                 writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.s.UserServiceApplication               : No active profile set, falling back to 1 default profile: "default"`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 123 ms. Found 5 JPA repository interfaces.`);
-                await new Promise(r => setTimeout(r, 300));
+                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories`);
                 writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@...]`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 13 endpoint(s) beneath base path \'/actuator\'`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.s.UserServiceApplication               : Started UserServiceApplication in 3.666 seconds (JVM running for 4.142)`);
                 
-                writeLine('\n\x1b[32mContainer springapp is now running\x1b[0m\n');
+                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.p.integration.GoServiceConfig          : Initializing Go service integration`);
+                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.p.integration.GoServiceClient         : Registering Go service endpoints: http://localhost:8081/api/v1`);
+                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.p.integration.EventBusConfig          : Setting up event bus for service communication`);
+                
+                writeLine(`${getCurrentTimestamp()}  INFO 1 --- [           main] c.s.UserServiceApplication             : Started UserServiceApplication in 3.666 seconds`);
+                writeLine('\n\x1b[32mContainer springapp is now running and waiting for Go service\x1b[0m\n');
                 runningApps.springBoot = true;
-                term.write(terminalState.prompt);
                 return;
             }
 
             if (args[2] === 'goapp') {
-                // Go API başlatma çıktılarında timestamp güncelleme
                 const startTime = getCurrentTimestamp();
                 writeLine('Creating Go API container...');
                 await simulateLoading('Starting container ', 800);
                 writeLine('\n[+] Container created: goapp');
                 await new Promise(r => setTimeout(r, 500));
 
-                writeLine(`\n${getCurrentDate()} ${getCurrentTimestamp()} INFO Starting API server...`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()} DEBUG Loading config from environment`);
-                await new Promise(r => setTimeout(r, 400));
-                writeLine(`${getCurrentTimestamp()} INFO Establishing database connection`);
-                await new Promise(r => setTimeout(r, 600));
-                writeLine(`${getCurrentTimestamp()} DEBUG Database connection pool established`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()} INFO Initializing HTTP router`);
-                await new Promise(r => setTimeout(r, 400));
-                writeLine(`${getCurrentTimestamp()} DEBUG Registered handler: /api/v1/profile`);
-                writeLine(`${getCurrentTimestamp()} DEBUG Registered handler: /api/v1/experience`);
-                writeLine(`${getCurrentTimestamp()} DEBUG Registered handler: /api/v1/projects`);
-                writeLine(`${getCurrentTimestamp()} DEBUG Registered handler: /api/v1/links`);
-                await new Promise(r => setTimeout(r, 500));
+                writeLine(`\n${getCurrentDate()} ${getCurrentTimestamp()} INFO Starting Go Microservice...`);
+                writeLine(`${getCurrentTimestamp()} DEBUG Loading service configuration`);
+                
+                writeLine(`${getCurrentTimestamp()} INFO Establishing connection to Spring Boot service`);
+                writeLine(`${getCurrentTimestamp()} DEBUG Registering with Spring Boot discovery service`);
+                
+                writeLine(`${getCurrentTimestamp()} INFO Starting HTTP server`);
+                
+                writeLine(`${getCurrentTimestamp()} INFO Establishing gRPC connection with Spring Boot`);
+                writeLine(`${getCurrentTimestamp()} DEBUG gRPC server listening on :9090`);
+                writeLine(`${getCurrentTimestamp()} INFO Connected to Spring Boot service successfully`);
+                
                 writeLine(`${getCurrentTimestamp()} INFO Starting metrics collector`);
-                await new Promise(r => setTimeout(r, 300));
-                writeLine(`${getCurrentTimestamp()} INFO Server is running on :8081`);
+                writeLine(`${getCurrentTimestamp()} INFO HTTP server running on :8081`);
                 writeLine(`${getCurrentTimestamp()} INFO Health check endpoint: http://localhost:8081/health`);
                 
-                writeLine('\n\x1b[32mContainer goapp is now running\x1b[0m');
+                writeLine('\n\x1b[32mContainer goapp is now running and connected to Spring Boot service\x1b[0m');
+                
+                await new Promise(r => setTimeout(r, 500));
+                writeLine(`\n${getCurrentTimestamp()} INFO [Spring Boot] Detected Go service startup`);
+                writeLine(`${getCurrentTimestamp()} INFO [Spring Boot] Service communication established`);
+                
                 runningApps.goApp = true;
+                term.write(terminalState.prompt);
                 return;
             }
         }
