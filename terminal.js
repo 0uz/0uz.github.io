@@ -40,29 +40,45 @@ term.options.theme = {
 function updateTerminalSize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
+    const headerHeight = document.getElementById('terminal-header').offsetHeight;
+    const isMobile = width <= 768;
+    const mobileButtonsHeight = isMobile ? 40 : 0; // Mobil butonlar için alanı azalt
 
     // Mobil cihazlar için font boyutunu ayarla
     let fontSize = 14;
     if (width <= 480) {
-        fontSize = 12;
+        fontSize = 11;
     } else if (width <= 768) {
-        fontSize = 13;
+        fontSize = 12;
     }
 
     // Margin ve padding'leri hesaba kat
-    const margin = width <= 480 ? 10 : (width <= 768 ? 20 : 30);
+    const margin = width <= 480 ? 5 : (width <= 768 ? 10 : 20);
+    const padding = width <= 480 ? 5 : (width <= 768 ? 8 : 10);
+    
     const dims = {
-        cols: Math.floor((width - (margin * 2)) / (fontSize * 0.6)),
-        rows: Math.floor((height - (margin * 2)) / (fontSize * 1.2))
+        cols: Math.floor((width - (margin * 2) - (padding * 2)) / (fontSize * 0.6)),
+        rows: Math.floor((height - headerHeight - mobileButtonsHeight - (margin * 2)) / (fontSize * 1.2))
     };
 
     term.options.fontSize = fontSize;
     term.resize(dims.cols, dims.rows);
+    scrollToBottom();
 }
 
 // Pencere boyutu değiştiğinde terminal boyutunu güncelle
 window.addEventListener('resize', updateTerminalSize);
-updateTerminalSize();
+
+// Header yüklendikten sonra terminal boyutunu güncelle
+setTimeout(updateTerminalSize, 100);
+
+// Terminal çıktısını en alta kaydır
+function scrollToBottom() {
+    const viewport = document.querySelector('.xterm-viewport');
+    if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+    }
+}
 
 // Terminal giriş/çıkış yönetimi
 function clearCurrentLine() {
@@ -93,15 +109,15 @@ function addToHistory(command) {
 function getWelcomeMessage() {
     const width = window.innerWidth;
     if (width <= 768) {
-        // Mobil cihazlar için basit başlık
-        return '\x1b[1m\x1b[38;5;205m' + 
-            '╔═══════════════════╗\n' +
-            '║    Backend OUZ    ║\n' +
-            '╚═══════════════════╝\x1b[0m';
+        // Mobil cihazlar için daha kompakt başlık
+        return '\x1b[1m\x1b[38;5;82m' +
+            '╔═══════════════╗\n' +
+            '║ Backend OUZ   ║\n' +
+            '╚═══════════════╝\x1b[0m';
     }
     
     // Desktop için tam ASCII art
-    return '\x1b[1m\x1b[38;5;205m' + 
+    return '\x1b[1m\x1b[38;5;82m' + // Terminal yeşili için 82 kodunu kullan
         '  ____             _                  _    ___  _    _ ______\n' +
         ' |  _ \\           | |                | |  / _ \\| |  | |___  /\n' +
         ' | |_) | __ _  ___| | _____ _ __   __| | | | | | |  | |  / / \n' +
@@ -112,17 +128,32 @@ function getWelcomeMessage() {
         '                                                             \x1b[0m';
 }
 
-// Hoş geldin mesajı ve otomatik başlatma
-writeLine(getWelcomeMessage());
-writeLine('');
-writeLine('\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0 - Type "help" for available commands\x1b[0m');
-writeLine('');
+// Terminal header'ını oluştur
+const headerContent = getWelcomeMessage() + '\n' +
+    '\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0 - Type "help" for available commands\x1b[0m';
+
+// Header'ı ayrı bir div'e yaz
+const headerDiv = document.getElementById('terminal-header');
+const headerTerm = new Terminal({
+    cursorBlink: false,
+    disableStdin: true,
+    fontSize: term.options.fontSize,
+    fontFamily: term.options.fontFamily,
+    theme: term.options.theme,
+    convertEol: true,
+    rows: headerContent.split('\n').length
+});
+
+headerTerm.open(headerDiv);
+headerTerm.write(headerContent);
+
+// Terminal başlangıcı için sadece prompt yaz
 term.write(terminalState.prompt);
 
 // Otomatik olarak infrastructure containerları başlat
 setTimeout(() => {
     writeLine('docker compose up -d');
-    commands.docker(['compose', 'up']); // Bu komut şimdi otomatik olarak springapp'i de başlatacak
+    commands.docker(['compose', 'up']);
 }, 200);
 
 // Klavye olaylarını dinle
@@ -152,17 +183,20 @@ term.onKey(({ key, domEvent }) => {
                     Promise.resolve(commands[cmd](args)).finally(() => {
                         term.write('\r\n' + terminalState.prompt);
                         updateMobileCommands(); // Komutları güncelle
+                        scrollToBottom();
                     });
                 } catch (error) {
                     writeLine('Error executing command: ' + error);
                     term.write(terminalState.prompt);
                     updateMobileCommands();
+                    scrollToBottom();
                 }
             } else {
                 writeLine(`Command not found: ${cmd}`);
                 writeLine('Type "help" for available commands');
                 term.write(terminalState.prompt);
                 updateMobileCommands();
+                scrollToBottom();
             }
         } else {
             term.write(terminalState.prompt);
@@ -171,6 +205,7 @@ term.onKey(({ key, domEvent }) => {
         terminalState.currentLine = '';
         terminalState.cursorPosition = 0;
         terminalState.historyIndex = -1;
+        scrollToBottom();
     }
     else if (ev.keyCode === 8) { // Backspace
         if (terminalState.cursorPosition > 0) {
@@ -237,3 +272,29 @@ document.getElementById('terminal-container').addEventListener('click', function
 // Terminal başlatıldığında mobil butonları güncelle ve klavye odağını ayarla
 updateMobileCommands();
 term.focus();
+
+// Mobil komutları güncelle
+function updateMobileCommands() {
+    const mobileCommands = document.getElementById('mobile-commands');
+    if (!mobileCommands) return;
+
+    mobileCommands.innerHTML = '';
+    
+    const commands = [
+        { text: 'clear', cmd: 'clear' },
+        { text: 'profile', cmd: 'curl localhost:8080/api/profile' },
+        { text: 'experience', cmd: 'curl localhost:8080/api/experience' },
+        { text: 'projects', cmd: 'curl localhost:8080/api/projects' },
+        { text: 'links', cmd: 'curl localhost:8080/api/links' }
+    ];
+
+    commands.forEach(({ text, cmd }) => {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.onclick = () => {
+            term.write(cmd + '\r\n');
+            executeCommand(cmd);
+        };
+        mobileCommands.appendChild(button);
+    });
+}
