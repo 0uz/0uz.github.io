@@ -113,11 +113,13 @@ function getWelcomeMessage() {
         return '\x1b[1m\x1b[38;5;82m' +
             '╔═══════════════╗\n' +
             '║ Backend OUZ   ║\n' +
-            '╚═══════════════╝\x1b[0m';
+            '╚═══════════════╝\x1b[0m\n' +
+            '\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0\n' +
+            'Type "help" for available commands\x1b[0m';
     }
     
-    // Desktop için tam ASCII art
-    return '\x1b[1m\x1b[38;5;82m' + // Terminal yeşili için 82 kodunu kullan
+    // Desktop için tam ASCII art ve tek satır başlık
+    return '\x1b[1m\x1b[38;5;82m' + 
         '  ____             _                  _    ___  _    _ ______\n' +
         ' |  _ \\           | |                | |  / _ \\| |  | |___  /\n' +
         ' | |_) | __ _  ___| | _____ _ __   __| | | | | | |  | |  / / \n' +
@@ -125,12 +127,12 @@ function getWelcomeMessage() {
         ' | |_) | (_| | (__|   <  __/ | | | (_| | | |_| | |__| |/ /__ \n' +
         ' |____/ \\__,_|\\___|_|\\_\\___|_| |_|\\__,_|  \\___/ \\____//_____|\n' +
         '                                                             \n' +
-        '                                                             \x1b[0m';
+        '                                                             \x1b[0m\n' +
+        '\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0 - Type "help" for available commands\x1b[0m';
 }
 
 // Terminal header'ını oluştur
-const headerContent = getWelcomeMessage() + '\n' +
-    '\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0 - Type "help" for available commands\x1b[0m';
+const headerContent = getWelcomeMessage();
 
 // Header'ı ayrı bir div'e yaz
 const headerDiv = document.getElementById('terminal-header');
