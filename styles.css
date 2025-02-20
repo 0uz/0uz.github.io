@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#terminal-container {
+    flex: 1;
+    background-color: #000;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal {
+    height: 100%;
+    padding: 10px;
+}
+
+.xterm .xterm-viewport {
+    overflow-y: hidden !important;
+}
+
+.xterm-screen {
+    padding: 5px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    #terminal-container {
+        margin: 10px;
+    }
+
+    .terminal {
+        padding: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    #terminal-container {
+        margin: 5px;
+    }
+
+    .xterm-screen {
+        padding: 2px;
+    }
+}
+
+/* Mobil cihazlar için komut butonları */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px;
+        background-color: #333;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .mobile-only button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        min-width: 60px;
+    }
+
+    .mobile-only button:hover {
+        background-color: #555;
+    }
+}
