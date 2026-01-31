@@ -561,14 +561,15 @@ function toggleView() {
         simpleDashboard.classList.add('hidden');
         terminalHeader.style.display = 'block';
         terminalContainer.style.display = 'flex';
-        if (mobileCommands) mobileCommands.style.display = 'flex';
+        
+        // Update and show mobile commands
+        updateMobileCommands();
         
         // Start header monitor
         stopHeaderMonitor();
         initHeaderMonitor();
         
         toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Simple Mode</span>';
-        toggleBtn.setAttribute('aria-label', 'Switch to Simple Mode');
         toggleBtn.style.background = '#0A0A0A';
         toggleBtn.style.borderColor = '#0A0A0A';
         toggleBtn.style.color = '#FFFFFF';
@@ -585,13 +586,17 @@ function toggleView() {
         simpleDashboard.classList.add('active');
         terminalHeader.style.display = 'none';
         terminalContainer.style.display = 'none';
-        if (mobileCommands) mobileCommands.style.display = 'none';
+        
+        // Hide mobile commands
+        if (mobileCommands) {
+            mobileCommands.style.display = 'none';
+            mobileCommands.innerHTML = '';
+        }
         
         // Stop header monitor
         stopHeaderMonitor();
         
         toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Terminal Mode</span>';
-        toggleBtn.setAttribute('aria-label', 'Switch to Terminal Mode');
         toggleBtn.style.background = '#FF3333';
         toggleBtn.style.borderColor = '#FF3333';
         toggleBtn.style.color = '#FFFFFF';
@@ -631,12 +636,20 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Toggle button not found');
     }
     
-    // Check if terminal should be initialized on load
+    // Check if terminal should be initialized on load and set mobile commands visibility
     const simpleDashboard = document.getElementById('simple-dashboard');
+    const mobileCommands = document.getElementById('mobile-commands');
     if (simpleDashboard) {
         const isTerminalVisible = !simpleDashboard.classList.contains('active');
         if (isTerminalVisible) {
             initializeTerminal();
+            updateMobileCommands();
+        } else {
+            // In simple mode, ensure mobile commands are hidden
+            if (mobileCommands) {
+                mobileCommands.style.display = 'none';
+                mobileCommands.innerHTML = '';
+            }
         }
     } else {
         console.error('simple-dashboard element not found');

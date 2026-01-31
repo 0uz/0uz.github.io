@@ -864,7 +864,7 @@ body.dark-mode {
 
 @media (max-width: 768px) {
     .mobile-only {
-        display: flex !important; /* Force display */
+        display: flex;
         justify-content: center;
         align-items: center;
         gap: 8px;
@@ -875,12 +875,17 @@ body.dark-mode {
         right: 0;
         width: 100%;
         min-height: 56px;
-        z-index: 9999; /* High z-index to stay on top */
+        z-index: 9999;
         background: var(--bg-secondary);
         border-top: 3px solid var(--border-color);
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         box-sizing: border-box;
+    }
+    
+    /* Hide mobile commands in simple mode */
+    .simple-dashboard.active ~ .mobile-only {
+        display: none;
     }
 
     .mobile-only button {
