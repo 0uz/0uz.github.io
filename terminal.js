@@ -324,12 +324,7 @@ function initializeTerminal() {
     }, 500);
 }
 
-// Check if terminal should be initialized on load
-const simpleDashboard = document.getElementById('simple-dashboard');
-const isTerminalVisible = !simpleDashboard.classList.contains('active');
-if (isTerminalVisible) {
-    initializeTerminal();
-}
+// Check if terminal should be initialized on load - will be done in DOMContentLoaded
 
 // Klavye olaylarını dinle
 term.onKey(({ key, domEvent }) => {
@@ -463,27 +458,42 @@ function updateMobileCommands() {
     const simpleDashboard = document.getElementById('simple-dashboard');
     if (simpleDashboard && simpleDashboard.classList.contains('active')) {
         mobileCommands.style.display = 'none';
+        mobileCommands.setAttribute('aria-hidden', 'true');
         return;
     }
 
     mobileCommands.innerHTML = '';
     mobileCommands.style.display = 'flex';
+    mobileCommands.setAttribute('aria-hidden', 'false');
+    mobileCommands.setAttribute('role', 'toolbar');
+    mobileCommands.setAttribute('aria-label', 'Quick terminal commands');
     
     const commands = [
-        { text: 'help', cmd: 'help', icon: '❓' },
-        { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: '👤' },
-        { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: '🚀' },
-        { text: 'clear', cmd: 'clear', icon: '🧹' },
-        { text: 'htop', cmd: 'htop', icon: '📊' }
+        { text: 'help', cmd: 'help', icon: '❓', label: 'Show help command' },
+        { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: '👤', label: 'Fetch profile data' },
+        { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: '🚀', label: 'Fetch projects data' },
+        { text: 'clear', cmd: 'clear', icon: '🧹', label: 'Clear terminal' },
+        { text: 'htop', cmd: 'htop', icon: '📊', label: 'Show system monitor' }
     ];
 
-    commands.forEach(({ text, cmd, icon }) => {
+    commands.forEach(({ text, cmd, icon, label }) => {
         const button = document.createElement('button');
-        button.innerHTML = `<span class="btn-icon-small">${icon}</span><span class="btn-text">${text}</span>`;
+        button.innerHTML = `<span class="btn-icon-small" aria-hidden="true">${icon}</span><span class="btn-text">${text}</span>`;
+        button.setAttribute('aria-label', label);
+        button.setAttribute('type', 'button');
         button.onclick = () => {
             term.write(cmd + '\r\n');
             executeCommand(cmd);
         };
+        
+        // Add keyboard support
+        button.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                button.click();
+            }
+        });
+        
         mobileCommands.appendChild(button);
     });
 }
@@ -510,17 +520,19 @@ function handleSwipe() {
     }
 }
 
+// Swipe gesture support for mobile with passive listeners for better performance
 document.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
-}, false);
+}, { passive: true });
 
 document.addEventListener('touchend', e => {
     touchEndX = e.changedTouches[0].screenX;
     handleSwipe();
-}, false);
+}, { passive: true });
 
 // View Toggle Function
 function toggleView() {
+    console.log('toggleView called');
     const body = document.body;
     const terminalHeader = document.getElementById('terminal-header');
     const terminalContainer = document.getElementById('terminal-container');
@@ -528,6 +540,13 @@ function toggleView() {
     const mobileCommands = document.getElementById('mobile-commands');
     const toggleBtn = document.getElementById('toggle-view-btn');
     const swipeHint = document.getElementById('swipe-hint');
+    
+    if (!simpleDashboard) {
+        console.error('simple-dashboard element not found');
+        return;
+    }
+    
+    console.log('simpleDashboard active:', simpleDashboard.classList.contains('active'));
     
     if (simpleDashboard.classList.contains('active')) {
         // Switch to Terminal Mode
@@ -588,3 +607,31 @@ function animateLanguageBars() {
         }, 100);
     });
 }
+
+// Initialize event listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Attach toggle button event listener
+    const toggleBtn = document.getElementById('toggle-view-btn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Toggle button clicked');
+            toggleView();
+        });
+        console.log('Toggle button event listener attached');
+    } else {
+        console.error('Toggle button not found');
+    }
+    
+    // Check if terminal should be initialized on load
+    const simpleDashboard = document.getElementById('simple-dashboard');
+    if (simpleDashboard) {
+        const isTerminalVisible = !simpleDashboard.classList.contains('active');
+        if (isTerminalVisible) {
+            initializeTerminal();
+        }
+    } else {
+        console.error('simple-dashboard element not found');
+    }
+});

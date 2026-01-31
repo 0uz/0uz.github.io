@@ -1,24 +1,100 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Backend Developer Terminal | Oğuzhan Duymaz</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>Oğuzhan Duymaz | Backend Developer Portfolio</title>
+    <meta name="description" content="Backend Developer specializing in Java, Spring Boot, Microservices, Kubernetes, and Cloud-Native Architecture. 4+ years experience building scalable systems.">
+    <meta name="keywords" content="Backend Developer, Java, Spring Boot, Microservices, Kubernetes, Kafka, PostgreSQL, Go, Software Engineer">
+    <meta name="author" content="Oğuzhan Duymaz">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://oguzhanduymaz.com">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://oguzhanduymaz.com">
+    <meta property="og:title" content="Oğuzhan Duymaz | Backend Developer Portfolio">
+    <meta property="og:description" content="Backend Developer specializing in Java, Spring Boot, Microservices, and Cloud-Native Architecture. Building scalable systems at Sahibinden.com">
+    <meta property="og:image" content="https://oguzhanduymaz.com/og-image.jpg">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://oguzhanduymaz.com">
+    <meta property="twitter:title" content="Oğuzhan Duymaz | Backend Developer">
+    <meta property="twitter:description" content="Backend Developer specializing in Java, Spring Boot, Microservices, and Cloud-Native Architecture.">
+    <meta property="twitter:image" content="https://oguzhanduymaz.com/og-image.jpg">
+    
+    <!-- Performance: Preconnect & DNS Prefetch -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    
+    <!-- Critical CSS Inline -->
+    <style>
+        /* Critical CSS for above-the-fold content */
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{--bg-primary:#0A0A0A;--text-primary:#E0E0E0;--accent-color:#FF4444}
+        body{margin:0;padding:0;background-color:var(--bg-primary);min-height:100vh;font-family:'JetBrains Mono',monospace;color:var(--text-primary);-webkit-font-smoothing:antialiased}
+        .swiss-container{max-width:1400px;margin:0 auto;padding:3rem;padding-top:80px}
+        .swiss-header{border-bottom:3px solid #333;padding-bottom:2rem;margin-bottom:3rem}
+        .header-grid{display:grid;grid-template-columns:2fr 1fr;gap:3rem}
+        .header-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,8vw,6rem);font-weight:700;line-height:0.9;letter-spacing:-0.04em;margin:0;color:var(--text-primary)}
+        @media (max-width:768px){.header-grid{grid-template-columns:1fr;gap:1.5rem}.header-title{font-size:2.5rem}}
+    </style>
+    
+    <!-- External CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Oğuzhan Duymaz",
+        "jobTitle": "Backend Developer",
+        "url": "https://oguzhanduymaz.com",
+        "sameAs": [
+            "https://github.com/0uz",
+            "https://linkedin.com/in/oguzhanduymaz"
+        ],
+        "worksFor": {
+            "@type": "Organization",
+            "name": "Sahibinden.com"
+        },
+        "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": "Turkish Aeronautical Association University"
+        },
+        "knowsAbout": ["Java", "Spring Boot", "Microservices", "Kubernetes", "PostgreSQL", "Kafka", "Go"]
+    }
+    </script>
 </head>
 <body class="dark-mode">
+    <!-- Skip to main content for accessibility -->
+    <a href="#simple-dashboard" class="skip-link">Skip to main content</a>
+    
     <!-- View Toggle Button -->
-    <div id="view-toggle" class="view-toggle">
-        <button id="toggle-view-btn" onclick="toggleView()">
-            <i class="fas fa-terminal"></i>
+    <div id="view-toggle" class="view-toggle" role="navigation" aria-label="View mode toggle">
+        <button id="toggle-view-btn" aria-label="Toggle between Terminal and Simple Mode" aria-pressed="false">
+            <i class="fas fa-terminal" aria-hidden="true"></i>
             <span>Terminal Mode</span>
         </button>
     </div>
@@ -30,13 +106,13 @@
     <div id="terminal-container" style="display: none;"></div>
     
     <!-- Simple Mode Dashboard (Default View) -->
-    <div id="simple-dashboard" class="simple-dashboard active">
+    <main id="simple-dashboard" class="simple-dashboard active" role="main">
         
         <!-- Main Grid Container -->
         <div class="swiss-container">
             
             <!-- Header Section -->
-            <header class="swiss-header">
+            <header class="swiss-header" role="banner">
                 <div class="header-grid">
                     <div class="header-left">
                         <span class="header-label">[DEV-001]</span>
@@ -47,17 +123,17 @@
                             <span class="status-indicator"></span>
                             <span class="status-text">OPEN TO WORK</span>
                         </div>
-                        <div class="contact-strip">
-                            <a href="tel:+905393369458" class="contact-link">TEL</a>
-                            <span class="divider">/</span>
-                            <a href="mailto:o.duymaz146@gmail.com" class="contact-link email">EMAIL</a>
-                            <span class="divider">/</span>
-                            <a href="https://oguzhanduymaz.com" target="_blank" class="contact-link">WEB</a>
-                            <span class="divider">/</span>
-                            <a href="https://github.com/0uz" target="_blank" class="contact-link">GH</a>
-                            <span class="divider">/</span>
-                            <a href="https://linkedin.com/in/oguzhanduymaz" target="_blank" class="contact-link">LI</a>
-                        </div>
+                        <nav class="contact-strip" aria-label="Contact links">
+                            <a href="tel:+905393369458" class="contact-link" aria-label="Phone: +90 539 336 94 58">TEL</a>
+                            <span class="divider" aria-hidden="true">/</span>
+                            <a href="mailto:o.duymaz146@gmail.com" class="contact-link email" aria-label="Email: o.duymaz146@gmail.com">EMAIL</a>
+                            <span class="divider" aria-hidden="true">/</span>
+                            <a href="https://oguzhanduymaz.com" target="_blank" rel="noopener noreferrer" class="contact-link" aria-label="Website (opens in new tab)">WEB</a>
+                            <span class="divider" aria-hidden="true">/</span>
+                            <a href="https://github.com/0uz" target="_blank" rel="noopener noreferrer" class="contact-link" aria-label="GitHub Profile (opens in new tab)">GH</a>
+                            <span class="divider" aria-hidden="true">/</span>
+                            <a href="https://linkedin.com/in/oguzhanduymaz" target="_blank" rel="noopener noreferrer" class="contact-link" aria-label="LinkedIn Profile (opens in new tab)">LI</a>
+                        </nav>
                     </div>
                 </div>
                 <div class="header-meta">
@@ -70,11 +146,11 @@
             <!-- Data Grid -->
             <div class="data-grid">
                 
-                <!-- Experience Panel (ÖNEMLİ) -->
-                <section class="data-panel experience-panel">
+                <!-- Experience Panel -->
+                <section class="data-panel experience-panel" aria-labelledby="experience-title">
                     <div class="panel-header">
-                        <span class="panel-id">01</span>
-                        <h2 class="panel-title">EXPERIENCE_LOG</h2>
+                        <span class="panel-id" aria-hidden="true">01</span>
+                        <h2 id="experience-title" class="panel-title">EXPERIENCE_LOG</h2>
                     </div>
                     <div class="exp-list">
                         <div class="exp-item current">
@@ -110,10 +186,10 @@
                 </section>
 
                 <!-- Project Panel (ÖNEMLİ) -->
-                <section class="data-panel project-panel">
+                <section class="data-panel project-panel" aria-labelledby="project-title">
                     <div class="panel-header">
-                        <span class="panel-id">02</span>
-                        <h2 class="panel-title">PROJECT_01</h2>
+                        <span class="panel-id" aria-hidden="true">02</span>
+                        <h2 id="project-title" class="panel-title">PROJECT_01</h2>
                     </div>
                     <div class="project-card">
                         <div class="project-header-row">
@@ -153,10 +229,10 @@
                 </section>
 
                 <!-- Tech Stack Panel (ÖNEMLİ) -->
-                <section class="data-panel stack-panel">
+                <section class="data-panel stack-panel" aria-labelledby="stack-title">
                     <div class="panel-header">
-                        <span class="panel-id">03</span>
-                        <h2 class="panel-title">TECH_STACK</h2>
+                        <span class="panel-id" aria-hidden="true">03</span>
+                        <h2 id="stack-title" class="panel-title">TECH_STACK</h2>
                     </div>
                     <div class="stack-grid">
                         <div class="stack-category">
@@ -210,10 +286,10 @@
                 </section>
 
                 <!-- Languages Panel -->
-                <section class="data-panel languages-panel">
+                <section class="data-panel languages-panel" aria-labelledby="languages-title">
                     <div class="panel-header">
-                        <span class="panel-id">04</span>
-                        <h2 class="panel-title">LANGUAGES</h2>
+                        <span class="panel-id" aria-hidden="true">04</span>
+                        <h2 id="languages-title" class="panel-title">LANGUAGES</h2>
                     </div>
                     <div class="language-list">
                         <div class="lang-item">
@@ -250,10 +326,10 @@
                 </section>
 
                 <!-- Education Panel -->
-                <section class="data-panel education-panel">
+                <section class="data-panel education-panel" aria-labelledby="education-title">
                     <div class="panel-header">
-                        <span class="panel-id">05</span>
-                        <h2 class="panel-title">EDUCATION</h2>
+                        <span class="panel-id" aria-hidden="true">05</span>
+                        <h2 id="education-title" class="panel-title">EDUCATION</h2>
                     </div>
                     <div class="edu-block">
                         <div class="edu-institution">TURKISH AERONAUTICAL ASSOCIATION UNIVERSITY</div>
@@ -267,10 +343,10 @@
                 </section>
 
                 <!-- Languages Spoken Panel -->
-                <section class="data-panel spoken-panel">
+                <section class="data-panel spoken-panel" aria-labelledby="spoken-title">
                     <div class="panel-header">
-                        <span class="panel-id">06</span>
-                        <h2 class="panel-title">LANGUAGES_SPOKEN</h2>
+                        <span class="panel-id" aria-hidden="true">06</span>
+                        <h2 id="spoken-title" class="panel-title">LANGUAGES_SPOKEN</h2>
                     </div>
                     <div class="spoken-list">
                         <div class="spoken-item">
@@ -285,21 +361,21 @@
                 </section>
 
                 <!-- CTA Panel -->
-                <section class="data-panel cta-panel">
+                <section class="data-panel cta-panel" aria-labelledby="cta-title">
                     <div class="cta-block">
-                        <p class="cta-text">AVAILABLE FOR CHALLENGING PROJECTS</p>
-                        <a href="mailto:o.duymaz146@gmail.com" class="cta-button">
+                        <p id="cta-title" class="cta-text">AVAILABLE FOR CHALLENGING PROJECTS</p>
+                        <a href="mailto:o.duymaz146@gmail.com" class="cta-button" aria-label="Send email to initiate contact">
                             <span class="cta-btn-text">INITIATE_CONTACT</span>
-                            <span class="cta-btn-arrow">→</span>
+                            <span class="cta-btn-arrow" aria-hidden="true">→</span>
                         </a>
                     </div>
                 </section>
 
                 <!-- Achievements Panel (EN SON - daha az önemli) -->
-                <section class="data-panel achievements-panel">
+                <section class="data-panel achievements-panel" aria-labelledby="achievements-title">
                     <div class="panel-header">
-                        <span class="panel-id">07</span>
-                        <h2 class="panel-title">ACHIEVEMENTS</h2>
+                        <span class="panel-id" aria-hidden="true">07</span>
+                        <h2 id="achievements-title" class="panel-title">ACHIEVEMENTS</h2>
                     </div>
                     <div class="achievements-list">
                         <div class="achievement-item">
@@ -320,13 +396,13 @@
             </div>
 
             <!-- Footer -->
-            <footer class="swiss-footer">
+            <footer class="swiss-footer" role="contentinfo">
                 <span class="footer-id">// END OF DOCUMENT</span>
                 <span class="footer-hash">[UPDATED: 2025]</span>
             </footer>
 
         </div>
-    </div>
+    </main>
 
     <!-- Mobile Commands -->
     <div id="mobile-commands" class="mobile-only"></div>

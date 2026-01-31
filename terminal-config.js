@@ -15,6 +15,14 @@ const term = new Terminal({
     useStyle: true
 });
 
-// Link eklentisini yükle
-const webLinksAddon = new WebLinksAddon();
-term.loadAddon(webLinksAddon);
+// Link eklentisini yükle - WebLinksAddon global'de tanımlıysa
+if (typeof WebLinksAddon !== 'undefined') {
+    try {
+        const webLinksAddon = new WebLinksAddon();
+        term.loadAddon(webLinksAddon);
+    } catch (e) {
+        console.warn('WebLinksAddon could not be loaded:', e);
+    }
+} else {
+    console.warn('WebLinksAddon not available');
+}

@@ -10,6 +10,37 @@
     padding: 0;
 }
 
+/* Accessibility: Skip Link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    padding: 8px;
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 100000;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Accessibility: Focus Visible */
+*:focus-visible {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users, keep for keyboard */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
 :root {
     /* Swiss Color Palette - Monochrome + Single Accent */
     --bg-primary: #FFFFFF;
@@ -56,11 +87,13 @@ body {
     flex-direction: column;
     overflow: hidden;
     font-family: var(--font-mono);
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 16px; /* Increased from 14px for better accessibility and iOS compatibility */
+    line-height: 1.6; /* Improved line height for readability */
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%; /* Prevent mobile font scaling */
+    -webkit-text-size-adjust: 100%;
 }
 
 /* Dark Mode - Default */
@@ -282,7 +315,8 @@ body.dark-mode {
     align-items: center;
     gap: var(--space-xs);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 14px; /* Increased from 12px */
+    flex-wrap: wrap;
 }
 
 .contact-link {
@@ -291,9 +325,14 @@ body.dark-mode {
     font-weight: 500;
     transition: var(--transition-fast);
     border-bottom: 2px solid transparent;
+    padding: 8px 4px; /* Increased touch target to ~44px height */
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
 }
 
-.contact-link:hover {
+.contact-link:hover,
+.contact-link:focus-visible {
     border-bottom-color: var(--accent-color);
     color: var(--accent-color);
 }
@@ -826,32 +865,53 @@ body.dark-mode {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 8px;
-        padding: 12px;
+        gap: 10px;
+        padding: 12px 16px;
         position: fixed;
         bottom: 0;
+        left: 0;
+        right: 0;
         width: 100%;
-        height: 50px;
+        min-height: 60px; /* Increased for better touch targets */
         z-index: 1000;
+        background: var(--bg-secondary);
+        border-top: 3px solid var(--border-color);
+        overflow-x: auto; /* Allow horizontal scroll if needed */
+        -webkit-overflow-scrolling: touch;
     }
 
     .mobile-only button {
         background: var(--bg-primary);
         color: var(--text-primary);
         border: 2px solid var(--border-color);
-        padding: 8px 12px;
+        padding: 10px 14px;
         font-family: var(--font-mono);
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 700;
         cursor: pointer;
         transition: var(--transition-fast);
+        min-height: 44px;
+        min-width: 44px;
+        flex-shrink: 0; /* Prevent buttons from shrinking */
+        border-radius: 0; /* Keep design consistent */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
     .mobile-only button:hover,
+    .mobile-only button:focus-visible,
     .mobile-only button:active {
         background: var(--accent-color);
         border-color: var(--accent-color);
         color: var(--bg-primary);
+        outline: none;
+    }
+    
+    .mobile-only button:focus-visible {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 2px;
     }
 }
 
@@ -892,9 +952,17 @@ body.dark-mode {
    RESPONSIVE DESIGN
    ============================================ */
 @media (max-width: 1024px) {
+    body {
+        font-size: 15px;
+    }
+    
     .swiss-container {
         padding: var(--space-md);
         padding-top: 70px;
+    }
+    
+    .header-title {
+        font-size: clamp(2.5rem, 6vw, 4rem);
     }
     
     .achievements-panel,
@@ -911,17 +979,40 @@ body.dark-mode {
     .cta-panel {
         grid-column: span 12;
     }
+    
+    /* Better touch targets for tablet */
+    .contact-link {
+        padding: 6px 4px;
+        font-size: 13px;
+    }
+    
+    .exp-desc {
+        font-size: 12px;
+    }
+    
+    .project-desc {
+        font-size: 12px;
+    }
+    
+    .stack-list li {
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 768px) {
+    body {
+        font-size: 15px; /* Slightly smaller than desktop but still readable */
+    }
+    
     .view-toggle {
         top: 12px;
         right: 12px;
     }
     
     #toggle-view-btn {
-        padding: 10px 14px;
-        font-size: 10px;
+        padding: 12px 16px; /* Increased touch target */
+        font-size: 11px;
+        min-height: 44px; /* Minimum touch target size */
     }
     
     .header-grid {
@@ -935,12 +1026,29 @@ body.dark-mode {
     }
     
     .header-title {
-        font-size: 2.5rem;
+        font-size: 2.75rem; /* Increased from 2.5rem */
+    }
+    
+    .header-label {
+        font-size: 12px;
     }
     
     .header-meta {
         flex-direction: column;
         gap: var(--space-xs);
+        font-size: 12px;
+    }
+    
+    .contact-strip {
+        font-size: 13px;
+    }
+    
+    .status-box {
+        padding: 10px 14px; /* Larger touch target */
+    }
+    
+    .status-text {
+        font-size: 12px;
     }
     
     .achievements-panel,
@@ -953,20 +1061,88 @@ body.dark-mode {
     .cta-panel {
         grid-column: span 12;
     }
+    
+    .data-panel {
+        padding: var(--space-md);
+    }
+    
+    .panel-title {
+        font-size: 13px;
+    }
+    
+    .exp-role {
+        font-size: 13px;
+    }
+    
+    .exp-company {
+        font-size: 15px;
+    }
+    
+    .exp-desc {
+        font-size: 13px;
+        line-height: 1.7; /* Better readability */
+    }
+    
+    .project-name {
+        font-size: 18px;
+    }
+    
+    .project-desc {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+    
+    .stack-list li {
+        font-size: 12px;
+        padding: 5px 9px;
+    }
+    
+    .mobile-only button {
+        min-height: 44px; /* Ensure minimum touch target */
+        padding: 10px 14px;
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 480px) {
+    :root {
+        --space-xs: 0.75rem; /* Increased spacing for touch */
+        --space-sm: 1.25rem;
+    }
+    
     .swiss-container {
         padding: var(--space-sm);
-        padding-top: 60px;
+        padding-top: 70px; /* Increased for better spacing */
     }
     
     .header-title {
-        font-size: 2rem;
+        font-size: 2.25rem; /* Slightly larger for readability */
+        line-height: 1;
+    }
+    
+    .header-label {
+        font-size: 11px;
+    }
+    
+    .header-meta {
+        font-size: 12px; /* Increased from 11px */
+    }
+    
+    .contact-strip {
+        font-size: 13px;
+    }
+    
+    .contact-link {
+        padding: 10px 6px; /* Larger touch targets on mobile */
     }
     
     .lang-item {
-        grid-template-columns: 60px 1fr 40px;
+        grid-template-columns: 80px 1fr; /* Better proportions */
+        gap: 12px;
+    }
+    
+    .lang-name {
+        font-size: 13px;
     }
     
     .project-metrics {
@@ -976,7 +1152,61 @@ body.dark-mode {
     
     .exp-header {
         flex-direction: column;
-        gap: 4px;
+        gap: 6px;
+    }
+    
+    .exp-role {
+        font-size: 13px;
+    }
+    
+    .exp-period {
+        font-size: 12px;
+    }
+    
+    .panel-title {
+        font-size: 13px;
+    }
+    
+    .stack-cat-title {
+        font-size: 11px;
+    }
+    
+    .stack-list li {
+        font-size: 12px; /* Increased from 11px */
+        padding: 6px 10px; /* Larger touch targets */
+    }
+    
+    .exp-tags span {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    .project-tech-list span {
+        font-size: 10px;
+        padding: 5px 10px;
+    }
+    
+    .cta-button {
+        padding: 16px; /* Larger touch target */
+        min-height: 56px;
+    }
+    
+    .achievement-text {
+        font-size: 12px;
+    }
+    
+    .spoken-lang,
+    .spoken-level {
+        font-size: 13px;
+    }
+    
+    .edu-institution {
+        font-size: 16px;
+    }
+    
+    .edu-degree,
+    .edu-period {
+        font-size: 13px;
     }
 }
 
