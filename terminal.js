@@ -9,6 +9,176 @@ const terminalState = {
     prompt: '\x1b[1m\x1b[38;5;87m➜\x1b[0m \x1b[1m\x1b[38;5;76m~/portfolio\x1b[0m \x1b[38;5;39m$\x1b[0m '
 };
 
+// Live System Monitor for Header
+let headerMonitorInterval = null;
+let asciiTerm = null;
+let monitorTerm = null;
+
+function getWelcomeMessage() {
+    const width = window.innerWidth;
+    if (width <= 768) {
+        return '\x1b[1m\x1b[38;5;82m' +
+            '╔═══════════════╗\n' +
+            '║ Backend OUZ   ║\n' +
+            '╚═══════════════╝\x1b[0m';
+    }
+    
+    return '\x1b[1m\x1b[38;5;82m' + 
+        '  ____             _                  _    ___  _    _ ______\n' +
+        ' |  _ \\           | |                | |  / _ \\| |  | |___  /\n' +
+        ' | |_) | __ _  ___| | _____ _ __   __| | | | | | |  | |  / / \n' +
+        ' |  _ < / _` |/ __| |/ / _ \\ \'_ \\ / _` | | | | | |  | | / /  \n' +
+        ' | |_) | (_| | (__|   <  __/ | | | (_| | | |_| | |__| |/ /__ \n' +
+        ' |____/ \\__,_|\\___|_|\\_\\___|_| |_|\\__,_|  \\___/ \\____//_____|\x1b[0m';
+}
+
+function initHeaderMonitor() {
+    const headerDiv = document.getElementById('terminal-header');
+    if (!headerDiv) return;
+    
+    // Clear existing content
+    headerDiv.innerHTML = '';
+    
+    // Create container for both terminals
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    
+    // ASCII Art Terminal (Left side)
+    const asciiDiv = document.createElement('div');
+    asciiDiv.style.flex = window.innerWidth <= 1024 ? '0 0 auto' : '0 0 60%';
+    asciiDiv.style.minWidth = '300px';
+    container.appendChild(asciiDiv);
+    
+    // Monitor Terminal (Right side) - only on larger screens
+    if (window.innerWidth > 1024) {
+        const monitorDiv = document.createElement('div');
+        monitorDiv.style.flex = '0 0 40%';
+        monitorDiv.style.minWidth = '350px';
+        container.appendChild(monitorDiv);
+        
+        monitorTerm = new Terminal({
+            cursorBlink: false,
+            disableStdin: true,
+            fontSize: 11,
+            fontFamily: 'JetBrains Mono, monospace',
+            theme: {
+                background: '#0A0A0A',
+                foreground: '#E0E0E0',
+                cursor: '#0A0A0A',
+                black: '#0A0A0A',
+                red: '#FF4444',
+                green: '#51CF66',
+                yellow: '#FFD93D',
+                blue: '#61AFEF',
+                magenta: '#C678DD',
+                cyan: '#56B6C2',
+                white: '#E0E0E0',
+                brightBlack: '#555555',
+                brightRed: '#FF6B6B',
+                brightGreen: '#98C379',
+                brightYellow: '#D19A66',
+                brightBlue: '#61AFEF',
+                brightMagenta: '#C678DD',
+                brightCyan: '#56B6C2',
+                brightWhite: '#FFFFFF'
+            },
+            convertEol: true,
+            rows: 6,
+            cols: 45
+        });
+        
+        monitorTerm.open(monitorDiv);
+    }
+    
+    // ASCII Art Terminal
+    asciiTerm = new Terminal({
+        cursorBlink: false,
+        disableStdin: true,
+        fontSize: window.innerWidth <= 768 ? 10 : 13,
+        fontFamily: 'JetBrains Mono, monospace',
+        theme: {
+            background: '#0A0A0A',
+            foreground: '#E0E0E0',
+            cursor: '#0A0A0A'
+        },
+        convertEol: true,
+        rows: window.innerWidth <= 768 ? 3 : 6
+    });
+    
+    asciiTerm.open(asciiDiv);
+    
+    const welcomeMessage = getWelcomeMessage();
+    asciiTerm.write(welcomeMessage);
+    
+    // Start live monitoring if monitor term exists
+    if (monitorTerm) {
+        updateHeaderMonitor();
+        headerMonitorInterval = setInterval(updateHeaderMonitor, 2000);
+    }
+    
+    headerDiv.appendChild(container);
+}
+
+function updateHeaderMonitor() {
+    if (!monitorTerm) return;
+    
+    const now = new Date();
+    const time = now.toLocaleTimeString('tr-TR', { hour12: false });
+    const uptime = Math.floor((Date.now() - window.pageLoadTime) / 1000);
+    const uptimeStr = `${Math.floor(uptime / 3600)}:${String(Math.floor((uptime % 3600) / 60)).padStart(2, '0')}:${String(uptime % 60).padStart(2, '0')}`;
+    
+    // Simulated metrics
+    const cpuUsage = Math.floor(Math.random() * 35 + 15);
+    const memUsed = Math.floor(Math.random() * 400 + 600);
+    const memTotal = 8192;
+    const memPercent = Math.floor((memUsed / memTotal) * 100);
+    const processes = Math.floor(Math.random() * 30 + 120);
+    const loadAvg = [(Math.random() * 1.5 + 0.3).toFixed(2), (Math.random() * 1.2 + 0.4).toFixed(2), (Math.random() * 1.0 + 0.5).toFixed(2)];
+    
+    // Network stats (simulated)
+    const netDown = (Math.random() * 15 + 5).toFixed(1);
+    const netUp = (Math.random() * 8 + 2).toFixed(1);
+    
+    // Disk usage
+    const diskUsed = 234;
+    const diskTotal = 512;
+    const diskPercent = Math.floor((diskUsed / diskTotal) * 100);
+    
+    // Clear and redraw
+    monitorTerm.write('\x1b[2J\x1b[H');
+    
+    // Line 1: Title and time
+    monitorTerm.write(`\x1b[1m\x1b[38;5;87m◉ MONITOR\x1b[0m \x1b[38;5;244m${time}\x1b[0m \x1b[38;5;244m${uptimeStr}\x1b[0m`);
+    monitorTerm.write('\r\n');
+    
+    // Line 2: CPU
+    const cpuColor = cpuUsage > 70 ? '196' : '82';
+    const cpuBar = '█'.repeat(Math.floor(cpuUsage / 10)) + '░'.repeat(10 - Math.floor(cpuUsage / 10));
+    monitorTerm.write(`\x1b[38;5;${cpuColor}mCPU\x1b[0m[\x1b[38;5;${cpuColor}m${cpuBar}\x1b[0m]\x1b[1m${cpuUsage}%\x1b[0m`);
+    monitorTerm.write('\r\n');
+    
+    // Line 3: MEM
+    const memColor = memPercent > 80 ? '196' : '214';
+    const memBar = '█'.repeat(Math.floor(memPercent / 10)) + '░'.repeat(10 - Math.floor(memPercent / 10));
+    monitorTerm.write(`\x1b[38;5;${memColor}mMEM\x1b[0m[\x1b[38;5;${memColor}m${memBar}\x1b[0m]\x1b[1m${memPercent}%\x1b[0m \x1b[38;5;244mD:\x1b[0m\x1b[38;5;33m${diskPercent}%\x1b[0m`);
+    monitorTerm.write('\r\n');
+    
+    // Line 4: Network and services
+    monitorTerm.write(`\x1b[38;5;244m▼\x1b[0m\x1b[38;5;82m${netDown}\x1b[0m \x1b[38;5;244m▲\x1b[0m\x1b[38;5;214m${netUp}\x1b[0m \x1b[38;5;82m●PG ●RD ●KF\x1b[0m`);
+}
+
+function stopHeaderMonitor() {
+    if (headerMonitorInterval) {
+        clearInterval(headerMonitorInterval);
+        headerMonitorInterval = null;
+    }
+}
+
+// Page load time for uptime calculation
+window.pageLoadTime = Date.now();
+
 // Terminal container'a bağla
 term.open(document.getElementById('terminal-container'));
 term.options.allowTransparency = true;
@@ -35,6 +205,9 @@ term.options.theme = {
     brightCyan: '#56b6c2',
     brightWhite: '#ffffff'
 };
+
+// Initialize header monitor
+initHeaderMonitor();
 
 // Terminal boyutunu ayarla fonksiyonunu güncelle
 function updateTerminalSize() {
@@ -65,7 +238,12 @@ function updateTerminalSize() {
 }
 
 // Pencere boyutu değiştiğinde terminal boyutunu güncelle
-window.addEventListener('resize', updateTerminalSize);
+window.addEventListener('resize', () => {
+    updateTerminalSize();
+    // Reinitialize header on resize for responsive
+    stopHeaderMonitor();
+    initHeaderMonitor();
+});
 
 // Header yüklendikten sonra terminal boyutunu güncelle
 setTimeout(updateTerminalSize, 100);
@@ -101,48 +279,6 @@ function addToHistory(command) {
         }
     }
 }
-
-// ASCII art ve başlık için fonksiyon
-function getWelcomeMessage() {
-    const width = window.innerWidth;
-    if (width <= 768) {
-        return '\x1b[1m\x1b[38;5;82m' +
-            '╔═══════════════╗\n' +
-            '║ Backend OUZ   ║\n' +
-            '╚═══════════════╝\x1b[0m\n' +
-            '\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0\n' +
-            'Type "help" for available commands\x1b[0m';
-    }
-    
-    return '\x1b[1m\x1b[38;5;82m' + 
-        '  ____             _                  _    ___  _    _ ______\n' +
-        ' |  _ \\           | |                | |  / _ \\| |  | |___  /\n' +
-        ' | |_) | __ _  ___| | _____ _ __   __| | | | | | |  | |  / / \n' +
-        ' |  _ < / _` |/ __| |/ / _ \\ \'_ \\ / _` | | | | | |  | | / /  \n' +
-        ' | |_) | (_| | (__|   <  __/ | | | (_| | | |_| | |__| |/ /__ \n' +
-        ' |____/ \\__,_|\\___|_|\\_\\___|_| |_|\\__,_|  \\___/ \\____//_____|\n' +
-        '                                                             \n' +
-        '                                                             \x1b[0m\n' +
-        '\x1b[1m\x1b[38;5;81mBackend Developer Terminal v2.0.0 - Type "help" for available commands\x1b[0m';
-}
-
-// Terminal header'ını oluştur
-const headerContent = getWelcomeMessage();
-
-// Header'ı ayrı bir div'e yaz
-const headerDiv = document.getElementById('terminal-header');
-const headerTerm = new Terminal({
-    cursorBlink: false,
-    disableStdin: true,
-    fontSize: term.options.fontSize,
-    fontFamily: term.options.fontFamily,
-    theme: term.options.theme,
-    convertEol: true,
-    rows: headerContent.split('\n').length
-});
-
-headerTerm.open(headerDiv);
-headerTerm.write(headerContent);
 
 // Terminal başlangıcı - sadece terminal görünürse başlat
 let terminalInitialized = false;
@@ -338,7 +474,7 @@ function updateMobileCommands() {
         { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: '👤' },
         { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: '🚀' },
         { text: 'clear', cmd: 'clear', icon: '🧹' },
-        { text: 'matrix', cmd: 'matrix', icon: '💊' }
+        { text: 'htop', cmd: 'htop', icon: '📊' }
     ];
 
     commands.forEach(({ text, cmd, icon }) => {
@@ -401,6 +537,10 @@ function toggleView() {
         terminalContainer.style.display = 'flex';
         if (mobileCommands) mobileCommands.style.display = 'flex';
         
+        // Start header monitor
+        stopHeaderMonitor();
+        initHeaderMonitor();
+        
         toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Simple Mode</span>';
         toggleBtn.style.background = '#0A0A0A';
         toggleBtn.style.borderColor = '#0A0A0A';
@@ -421,6 +561,9 @@ function toggleView() {
         terminalHeader.style.display = 'none';
         terminalContainer.style.display = 'none';
         if (mobileCommands) mobileCommands.style.display = 'none';
+        
+        // Stop header monitor
+        stopHeaderMonitor();
         
         toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Terminal Mode</span>';
         toggleBtn.style.background = '#FF3333';

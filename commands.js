@@ -479,289 +479,73 @@ const commands = {
         term.write('\x1b[H');
     },
 
-    // Fun & Interactive Commands
-    'typing': async () => {
-        const code = `
-@SpringBootApplication
-public class AwesomeDeveloper {
-    
-    @Autowired
-    private CoffeeService coffeeService;
-    
-    @PostConstruct
-    public void init() {
-        System.out.println("Ready to ship production code!");
-    }
-    
-    public void solveProblems() {
-        while (bugsExist()) {
-            drinkCoffee();
-            writeCleanCode();
-            deployToProd();
-        }
-    }
-}`;
-        writeLine('\x1b[1m\x1b[38;5;82mWriting production code...\x1b[0m\n');
-        for (let i = 0; i < code.length; i++) {
-            term.write('\x1b[38;5;252m' + code[i] + '\x1b[0m');
-            await new Promise(r => setTimeout(r, 30));
-        }
-        writeLine('\n\n\x1b[1m\x1b[38;5;82m✓ Code compiled successfully!\x1b[0m');
-        writeLine('\x1b[38;5;214mReady to deploy to production\x1b[0m');
-    },
-
-    'benchmark': async () => {
-        writeLine('\x1b[1m\x1b[38;5;81mRunning performance benchmark...\x1b[0m\n');
-        const tests = [
-            { name: 'REST API Latency', metric: '45ms', score: 95 },
-            { name: 'Database Queries/sec', metric: '12,500', score: 92 },
-            { name: 'Cache Hit Ratio', metric: '97.8%', score: 98 },
-            { name: 'Concurrent Users', metric: '50,000', score: 94 },
-            { name: 'Memory Usage', metric: '385MB', score: 89 }
-        ];
-        
-        for (const test of tests) {
-            await simulateLoading(`Testing ${test.name} `, 600);
-            const bar = '█'.repeat(Math.floor(test.score / 5)) + '░'.repeat(20 - Math.floor(test.score / 5));
-            writeLine(`\x1b[38;5;87m${test.name.padEnd(25)}\x1b[0m [\x1b[38;5;82m${bar}\x1b[0m] \x1b[1m${test.metric}\x1b[0m`);
-        }
-        
-        writeLine('\n\x1b[1m\x1b[38;5;82m✓ All benchmarks passed!\x1b[0m');
-        writeLine('\x1b[38;5;214mSystem ready for high-scale production load\x1b[0m');
-    },
-
-    'monitor': async () => {
-        writeLine('\x1b[1m\x1b[38;5;81mReal-time System Monitor\x1b[0m');
-        writeLine('Press Ctrl+C to exit\n');
-        
-        const metrics = [
-            { label: 'CPU Usage', color: 82, getValue: () => (Math.random() * 30 + 20).toFixed(1) },
-            { label: 'Memory', color: 214, getValue: () => (Math.random() * 200 + 300).toFixed(0) },
-            { label: 'Active Connections', color: 87, getValue: () => Math.floor(Math.random() * 500 + 1000) },
-            { label: 'Requests/sec', color: 213, getValue: () => Math.floor(Math.random() * 200 + 800) }
-        ];
-        
-        let iterations = 0;
-        const interval = setInterval(() => {
-            if (iterations >= 10) {
-                clearInterval(interval);
-                writeLine('\n\x1b[38;5;82mMonitoring session ended\x1b[0m');
-                term.write(terminalState.prompt);
-                return;
-            }
-            
-            const timestamp = getCurrentTimestamp();
-            let line = `\x1b[38;5;244m${timestamp}\x1b[0m  `;
-            
-            metrics.forEach(m => {
-                const value = m.getValue();
-                const unit = m.label === 'Memory' ? 'MB' : (m.label === 'CPU Usage' ? '%' : '');
-                line += `\x1b[38;5;${m.color}m${m.label}: ${value}${unit}\x1b[0m  `;
-            });
-            
-            term.write(line + '\r\n');
-            iterations++;
-        }, 800);
-        
-        return new Promise(resolve => setTimeout(() => resolve(), 9000));
-    },
-
-    'matrix': async () => {
-        writeLine('\x1b[1m\x1b[38;5;82mEntering the Matrix...\x1b[0m');
+    'htop': async () => {
+        writeLine('\x1b[1m\x1b[38;5;82mSystem Resource Monitor\x1b[0m');
         writeLine('\x1b[38;5;244m(Press any key to exit)\x1b[0m\n');
         
-        const chars = '0123456789ABCDEF';
-        const lines = 15;
-        const cols = 40;
-        let matrixRunning = true;
+        let monitoring = true;
+        let frame = 0;
         
-        // Key handler to stop matrix
         const keyHandler = ({ domEvent }) => {
-            matrixRunning = false;
+            monitoring = false;
             domEvent.preventDefault();
         };
         
-        // Attach temporary key handler
         const disposable = term.onKey(keyHandler);
         
-        let frame = 0;
-        while (matrixRunning && frame < 200) {
-            let output = '';
-            for (let i = 0; i < lines; i++) {
-                for (let j = 0; j < cols; j++) {
-                    if (Math.random() > 0.7) {
-                        output += `\x1b[38;5;${Math.floor(Math.random() * 6 + 22)}m${chars[Math.floor(Math.random() * chars.length)]}\x1b[0m`;
-                    } else {
-                        output += ' ';
-                    }
-                }
-                output += '\r\n';
-            }
-            term.write(output);
+        while (monitoring && frame < 100) {
+            const timestamp = new Date().toLocaleTimeString('tr-TR');
+            const cpuUsage = Math.floor(Math.random() * 40 + 20);
+            const memUsed = Math.floor(Math.random() * 300 + 400);
+            const memTotal = 8192;
+            const processes = Math.floor(Math.random() * 50 + 100);
+            const loadAvg = (Math.random() * 2 + 0.5).toFixed(2);
             
-            // Check every 10 frames if we should continue
-            frame++;
-            await new Promise(r => setTimeout(r, 80));
-        }
-        
-        // Clean up
-        disposable.dispose();
-        
-        term.write('\r\n');
-        writeLine('\x1b[1m\x1b[38;5;82mMatrix exited. Welcome back to reality.\x1b[0m');
-    },
-
-    'celebrate': async () => {
-        writeLine('\x1b[1m\x1b[38;5;214m🎉 Celebration mode activated! 🎉\x1b[0m');
-        
-        // Trigger confetti
-        if (typeof confetti !== 'undefined') {
-            const duration = 3000;
-            const end = Date.now() + duration;
+            // Clear screen and redraw
+            term.write('\x1b[2J\x1b[H');
             
-            (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#00d4ff', '#ff6b6b', '#ffd93d', '#51cf66']
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#00d4ff', '#ff6b6b', '#ffd93d', '#51cf66']
-                });
-                
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        }
-        
-        writeLine('\x1b[38;5;82m✓ You just witnessed my backend skills!\x1b[0m');
-        writeLine('\x1b[38;5;87mReady to bring this energy to your team!\x1b[0m');
-    },
-
-    'coffee': async () => {
-        const frames = [
-            '     )  (',
-            '    (   ) )',
-            '     ) ( (',
-            '   _______)_',
-            ' .`---------|',
-            ' (  /       |',
-            '  `-`-------`'
-        ];
-        
-        writeLine('\x1b[38;5;214mBrewing coffee for optimal coding performance...\x1b[0m\n');
-        
-        for (let i = 0; i < 3; i++) {
-            frames.forEach((frame, idx) => {
-                setTimeout(() => {
-                    term.write('\r\x1b[K' + '\x1b[38;5;94m' + frame + '\x1b[0m');
-                }, idx * 200);
-            });
-            await new Promise(r => setTimeout(r, frames.length * 200 + 300));
-        }
-        
-        writeLine('\n\n\x1b[1m\x1b[38;5;82m☕ Coffee ready! Productivity increased by 9000%\x1b[0m');
-    },
-
-    'hack': async () => {
-        writeLine('\x1b[1m\x1b[38;5;196mWARNING: Hollywood hacker mode engaged!\x1b[0m\n');
-        
-        const hackLines = [
-            'Bypassing mainframe firewall...',
-            'Decrypting AES-256 encryption...',
-            'Establishing backdoor connection...',
-            'Downloading confidential data...',
-            'Uploading virus to enemy server...',
-            'Overriding security protocols...',
-            'Access granted to Pentagon servers...',
-            'I\'m in! 🕶️'
-        ];
-        
-        for (const line of hackLines) {
-            await simulateLoading(line + ' ', 400);
-            writeLine(`\x1b[38;5;82m[OK]\x1b[0m ${line}`);
-        }
-        
-        writeLine('\n\x1b[1m\x1b[38;5;82mJust kidding! Real hacking takes much more skill and time 😄\x1b[0m');
-        writeLine('\x1b[38;5;87mBut I can build secure systems that prevent this!\x1b[0m');
-    },
-
-    'ascii': async () => {
-        writeLine('\x1b[1m\x1b[38;5;81mGitHub Contribution Graph (Last Year)\x1b[0m\n');
-        
-        const days = ['Mon', 'Wed', 'Fri'];
-        const levels = ['░', '▒', '▓', '█'];
-        
-        writeLine('        Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec');
-        
-        for (let day = 0; day < 7; day++) {
-            let line = (day % 2 === 0 ? days[day/2] || '   ' : '   ') + '  ';
-            for (let week = 0; week < 52; week++) {
-                const activity = Math.random();
-                let char;
-                if (activity < 0.5) char = levels[0];
-                else if (activity < 0.7) char = '\x1b[38;5;28m' + levels[1] + '\x1b[0m';
-                else if (activity < 0.85) char = '\x1b[38;5;34m' + levels[2] + '\x1b[0m';
-                else char = '\x1b[38;5;82m' + levels[3] + '\x1b[0m';
-                line += char;
-            }
-            writeLine(line);
-        }
-        
-        writeLine('\n\x1b[38;5;244mLess \x1b[38;5;28m▒\x1b[38;5;34m▓\x1b[38;5;82m█\x1b[38;5;244m More\x1b[0m');
-        writeLine('\x1b[1m\x1b[38;5;82m1000+ commits in the last year!\x1b[0m');
-    },
-
-    'whoami': () => {
-        writeLine('\x1b[1m\x1b[38;5;87mOğuzhan Duymaz\x1b[0m - Backend Developer Extraordinaire');
-        writeLine('\x1b[38;5;252m----------------------------------------\x1b[0m');
-        writeLine('\x1b[38;5;82mSpecialties:\x1b[0m');
-        writeLine('  • High-scale distributed systems');
-        writeLine('  • Microservices architecture');
-        writeLine('  • Performance optimization');
-        writeLine('  • Coffee consumption');
-        writeLine('\x1b[38;5;82mMission:\x1b[0m Building robust backends that scale');
-        writeLine('\x1b[38;5;214mFun fact: This terminal is running entirely in your browser!\x1b[0m');
-    },
-
-    'sudo': async (args) => {
-        if (args.join(' ') === 'make me a coffee') {
-            writeLine('\x1b[38;5;196m[sudo]\x1b[0m password for root: \x1b[38;5;252m********\x1b[0m');
-            await new Promise(r => setTimeout(r, 800));
-            writeLine('\x1b[38;5;82mAccess granted. Elevating privileges...\x1b[0m\n');
-            await new Promise(r => setTimeout(r, 500));
+            // Header
+            writeLine(`\x1b[38;5;87m${timestamp}\x1b[0m  \x1b[1mSYSTEM MONITOR\x1b[0m  \x1b[38;5;244m[Press any key to exit]\x1b[0m`);
+            writeLine('');
             
-            const coffeeArt = [
-                '                    (    ',
-                '                      )  ',
-                '              (       )  ',
-                '               )     (   ',
-                '             (       )   ',
-                '          ___(_______)___',
-                '          |  COFFEE     |',
-                '          |   FOR ROOT  |',
-                '          |_____________|',
-                '           (   )   (   ) ',
-                '            |_|     |_|  '
+            // CPU Bar
+            const cpuBar = '█'.repeat(Math.floor(cpuUsage / 5)) + '░'.repeat(20 - Math.floor(cpuUsage / 5));
+            writeLine(`\x1b[38;5;82mCPU\x1b[0m    [\x1b[38;5;${cpuUsage > 80 ? 196 : 82}m${cpuBar}\x1b[0m] \x1b[1m${cpuUsage}%\x1b[0m  Load: ${loadAvg}`);
+            
+            // Memory Bar
+            const memPercent = Math.floor((memUsed / memTotal) * 100);
+            const memBar = '█'.repeat(Math.floor(memPercent / 5)) + '░'.repeat(20 - Math.floor(memPercent / 5));
+            writeLine(`\x1b[38;5;214mMEM\x1b[0m    [\x1b[38;5;${memPercent > 80 ? 196 : 214}m${memBar}\x1b[0m] \x1b[1m${memPercent}%\x1b[0m  ${memUsed}MB / ${memTotal}MB`);
+            
+            // Processes
+            writeLine(`\x1b[38;5;87mPROC\x1b[0m   \x1b[1m${processes}\x1b[0m running processes`);
+            
+            writeLine('');
+            writeLine('\x1b[38;5;244mPID   USER      PRI  NI  VIRT   RES   SHR S  CPU% MEM%  TIME+   COMMAND\x1b[0m');
+            
+            // Process list
+            const procs = [
+                { pid: 1, user: 'root', cpu: cpuUsage, mem: 0.1, cmd: 'systemd' },
+                { pid: 1423, user: 'backend', cpu: 12.5, mem: 2.3, cmd: 'java -jar app.jar' },
+                { pid: 1847, user: 'backend', cpu: 8.2, mem: 1.8, cmd: 'go run main.go' },
+                { pid: 2156, user: 'postgres', cpu: 4.1, mem: 3.2, cmd: 'postgres: wal writer' },
+                { pid: 2234, user: 'redis', cpu: 2.3, mem: 0.8, cmd: 'redis-server' },
+                { pid: 2456, user: 'backend', cpu: 6.7, mem: 1.5, cmd: 'node metrics.js' },
+                { pid: 2678, user: 'root', cpu: 1.2, mem: 0.4, cmd: 'kworker/u:2' },
             ];
             
-            coffeeArt.forEach(line => {
-                writeLine('\x1b[38;5;94m' + line + '\x1b[0m');
+            procs.forEach(p => {
+                const cpuStr = p.cpu.toFixed(1).padStart(5);
+                const memStr = p.mem.toFixed(1).padStart(4);
+                writeLine(`${p.pid.toString().padStart(5)}  ${p.user.padEnd(8)}  20   0  234M  ${(p.mem * 80).toFixed(0)}M  12M S ${cpuStr} ${memStr}  0:02.11 ${p.cmd}`);
             });
             
-            writeLine('\n\x1b[1m\x1b[38;5;82m☕ Premium coffee served with root privileges!\x1b[0m');
-            writeLine('\x1b[38;5;214mOnly the best for admins 😎\x1b[0m');
-        } else {
-            writeLine('\x1b[38;5;196msudo: unknown command\x1b[0m');
-            writeLine('\x1b[38;5;252mTry: sudo make me a coffee\x1b[0m');
+            await new Promise(r => setTimeout(r, 1000));
+            frame++;
         }
+        
+        disposable.dispose();
+        writeLine('\n\x1b[38;5;82mMonitor closed.\x1b[0m');
     },
 
     help: () => {
@@ -791,16 +575,8 @@ public class AwesomeDeveloper {
         writeLine('    git log                   Show commit history');
         writeLine('');
         
-        writeLine('\x1b[1m\x1b[38;5;82m✨ Special Commands (Try these!):\x1b[0m');
-        writeLine('    benchmark       Run performance benchmarks');
-        writeLine('    monitor         Real-time system monitoring');
-        writeLine('    typing          Watch me write code in real-time');
-        writeLine('    matrix          Enter the Matrix (visual effect)');
-        writeLine('    celebrate       Celebration mode! 🎉');
-        writeLine('    coffee          Brew some virtual coffee ☕');
-        writeLine('    hack            Hollywood hacker simulation');
-        writeLine('    ascii           GitHub contribution graph');
-        writeLine('    whoami          About this developer');
+        writeLine('\x1b[1m\x1b[38;5;82m⚡ System Monitor:\x1b[0m');
+        writeLine('    htop                      Real-time system resource monitor');
         writeLine('');
         
         writeLine('\x1b[1m\x1b[38;5;87m💡 Tips:\x1b[0m');
@@ -808,6 +584,7 @@ public class AwesomeDeveloper {
         writeLine('    • Use arrow keys for command history');
         writeLine('    • Click "Simple Mode" button for HR-friendly view');
         writeLine('    • Try "docker compose up" to start the full stack!');
+        writeLine('    • Try "htop" for live system monitoring');
         writeLine('');
         
         writeLine('\x1b[38;5;214m🎯 Quick Start: Type "docker compose up" to begin the demo\x1b[0m');
