@@ -42,9 +42,8 @@ function updateTerminalSize() {
     const height = window.innerHeight;
     const headerHeight = document.getElementById('terminal-header').offsetHeight;
     const isMobile = width <= 768;
-    const mobileButtonsHeight = isMobile ? 40 : 0; // Mobil butonlar için alanı azalt
+    const mobileButtonsHeight = isMobile ? 40 : 0;
 
-    // Mobil cihazlar için font boyutunu ayarla
     let fontSize = 14;
     if (width <= 480) {
         fontSize = 11;
@@ -52,7 +51,6 @@ function updateTerminalSize() {
         fontSize = 12;
     }
 
-    // Margin ve padding'leri hesaba kat
     const margin = width <= 480 ? 5 : (width <= 768 ? 10 : 20);
     const padding = width <= 480 ? 5 : (width <= 768 ? 8 : 10);
     
@@ -89,7 +87,6 @@ function clearCurrentLine() {
 function refreshLine() {
     clearCurrentLine();
     term.write(terminalState.prompt + terminalState.currentLine);
-    // Cursor pozisyonunu doğru konuma getir
     if (terminalState.currentLine.length > terminalState.cursorPosition) {
         const moveBack = terminalState.currentLine.length - terminalState.cursorPosition;
         term.write('\x1b[' + moveBack + 'D');
@@ -109,7 +106,6 @@ function addToHistory(command) {
 function getWelcomeMessage() {
     const width = window.innerWidth;
     if (width <= 768) {
-        // Mobil cihazlar için daha kompakt başlık
         return '\x1b[1m\x1b[38;5;82m' +
             '╔═══════════════╗\n' +
             '║ Backend OUZ   ║\n' +
@@ -118,7 +114,6 @@ function getWelcomeMessage() {
             'Type "help" for available commands\x1b[0m';
     }
     
-    // Desktop için tam ASCII art ve tek satır başlık
     return '\x1b[1m\x1b[38;5;82m' + 
         '  ____             _                  _    ___  _    _ ______\n' +
         ' |  _ \\           | |                | |  / _ \\| |  | |___  /\n' +
@@ -149,14 +144,56 @@ const headerTerm = new Terminal({
 headerTerm.open(headerDiv);
 headerTerm.write(headerContent);
 
-// Terminal başlangıcı için sadece prompt yaz
-term.write(terminalState.prompt);
+// Terminal başlangıcı - sadece terminal görünürse başlat
+let terminalInitialized = false;
 
-// Otomatik olarak infrastructure containerları başlat
-setTimeout(() => {
-    writeLine('docker compose up -d');
-    commands.docker(['compose', 'up']);
-}, 200);
+function initializeTerminal() {
+    if (terminalInitialized) return;
+    terminalInitialized = true;
+    
+    term.write(terminalState.prompt);
+    
+    // Otomatik olarak infrastructure containerları başlat
+    setTimeout(() => {
+        if (typeof writeLine === 'function') {
+            writeLine('\x1b[38;5;244m# Initializing development environment...\x1b[0m');
+            writeLine('docker compose up -d');
+            if (typeof commands !== 'undefined' && commands.docker) {
+                commands.docker(['compose', 'up']).then(() => {
+                    setTimeout(() => {
+                        writeLine('\x1b[38;5;82m');
+                        writeLine('╔══════════════════════════════════════════════════════════════╗');
+                        writeLine('║              🚀 Environment Ready!                           ║');
+                        writeLine('║                                                              ║');
+                        writeLine('║  All services are now running:                               ║');
+                        writeLine('║    • PostgreSQL  (Port 5432)  ✓                              ║');
+                        writeLine('║    • Redis       (Port 6379)  ✓                              ║');
+                        writeLine('║    • Kafka       (Port 9092)  ✓                              ║');
+                        writeLine('║    • Spring Boot (Port 8080)  ✓                              ║');
+                        writeLine('║    • Go Service  (Port 8081)  ✓                              ║');
+                        writeLine('║                                                              ║');
+                        writeLine('║  Try: curl localhost:8080/api/profile                        ║');
+                        writeLine('║  Or type "help" to see all commands                          ║');
+                        writeLine('╚══════════════════════════════════════════════════════════════╝');
+                        writeLine('\x1b[0m');
+                        term.write(terminalState.prompt);
+                    }, 500);
+                }).catch(() => {
+                    term.write(terminalState.prompt);
+                });
+            } else {
+                term.write(terminalState.prompt);
+            }
+        }
+    }, 500);
+}
+
+// Check if terminal should be initialized on load
+const simpleDashboard = document.getElementById('simple-dashboard');
+const isTerminalVisible = !simpleDashboard.classList.contains('active');
+if (isTerminalVisible) {
+    initializeTerminal();
+}
 
 // Klavye olaylarını dinle
 term.onKey(({ key, domEvent }) => {
@@ -184,7 +221,7 @@ term.onKey(({ key, domEvent }) => {
                 try {
                     Promise.resolve(commands[cmd](args)).finally(() => {
                         term.write('\r\n' + terminalState.prompt);
-                        updateMobileCommands(); // Komutları güncelle
+                        updateMobileCommands();
                         scrollToBottom();
                     });
                 } catch (error) {
@@ -255,7 +292,7 @@ term.onKey(({ key, domEvent }) => {
             terminalState.currentLine.slice(terminalState.cursorPosition);
         terminalState.cursorPosition++;
         refreshLine();
-        updateMobileCommands(); // Her karakter girişinde komutları güncelle
+        updateMobileCommands();
     }
 });
 
@@ -271,32 +308,140 @@ document.getElementById('terminal-container').addEventListener('click', function
     term.focus();
 });
 
-// Terminal başlatıldığında mobil butonları güncelle ve klavye odağını ayarla
+// Simple Mode default - animasyonları başlat
+setTimeout(() => {
+    const simpleDashboard = document.getElementById('simple-dashboard');
+    if (simpleDashboard && simpleDashboard.classList.contains('active')) {
+        animateLanguageBars();
+    }
+}, 300);
+
+// Terminal başlatıldığında mobil butonları güncelle
 updateMobileCommands();
-term.focus();
 
 // Mobil komutları güncelle
 function updateMobileCommands() {
     const mobileCommands = document.getElementById('mobile-commands');
     if (!mobileCommands) return;
 
+    const simpleDashboard = document.getElementById('simple-dashboard');
+    if (simpleDashboard && simpleDashboard.classList.contains('active')) {
+        mobileCommands.style.display = 'none';
+        return;
+    }
+
     mobileCommands.innerHTML = '';
+    mobileCommands.style.display = 'flex';
     
     const commands = [
-        { text: 'clear', cmd: 'clear' },
-        { text: 'profile', cmd: 'curl localhost:8080/api/profile' },
-        { text: 'experience', cmd: 'curl localhost:8080/api/experience' },
-        { text: 'projects', cmd: 'curl localhost:8080/api/projects' },
-        { text: 'links', cmd: 'curl localhost:8080/api/links' }
+        { text: 'help', cmd: 'help', icon: '❓' },
+        { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: '👤' },
+        { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: '🚀' },
+        { text: 'clear', cmd: 'clear', icon: '🧹' },
+        { text: 'matrix', cmd: 'matrix', icon: '💊' }
     ];
 
-    commands.forEach(({ text, cmd }) => {
+    commands.forEach(({ text, cmd, icon }) => {
         const button = document.createElement('button');
-        button.textContent = text;
+        button.innerHTML = `<span class="btn-icon-small">${icon}</span><span class="btn-text">${text}</span>`;
         button.onclick = () => {
             term.write(cmd + '\r\n');
             executeCommand(cmd);
         };
         mobileCommands.appendChild(button);
+    });
+}
+
+// Swipe gesture support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+        const simpleDashboard = document.getElementById('simple-dashboard');
+        // Simple Mode'da sağa swipe = Terminal Mode'a geç
+        // Terminal Mode'da sola swipe = Simple Mode'a geç
+        if (simpleDashboard.classList.contains('active') && diff < 0) {
+            // Simple Mode'da sağa kaydır → Terminal
+            toggleView();
+        } else if (!simpleDashboard.classList.contains('active') && diff > 0) {
+            // Terminal Mode'da sola kaydır → Simple
+            toggleView();
+        }
+    }
+}
+
+document.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+document.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}, false);
+
+// View Toggle Function
+function toggleView() {
+    const body = document.body;
+    const terminalHeader = document.getElementById('terminal-header');
+    const terminalContainer = document.getElementById('terminal-container');
+    const simpleDashboard = document.getElementById('simple-dashboard');
+    const mobileCommands = document.getElementById('mobile-commands');
+    const toggleBtn = document.getElementById('toggle-view-btn');
+    const swipeHint = document.getElementById('swipe-hint');
+    
+    if (simpleDashboard.classList.contains('active')) {
+        // Switch to Terminal Mode
+        simpleDashboard.classList.remove('active');
+        simpleDashboard.classList.add('hidden');
+        terminalHeader.style.display = 'block';
+        terminalContainer.style.display = 'flex';
+        if (mobileCommands) mobileCommands.style.display = 'flex';
+        
+        toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Simple Mode</span>';
+        toggleBtn.style.background = '#0A0A0A';
+        toggleBtn.style.borderColor = '#0A0A0A';
+        toggleBtn.style.color = '#FFFFFF';
+        
+        if (swipeHint) swipeHint.innerHTML = '<i class="fas fa-hand-pointer"></i> Swipe left for Simple Mode';
+        
+        // Terminal'i başlat ve yeniden boyutlandır
+        setTimeout(() => {
+            updateTerminalSize();
+            initializeTerminal();
+            term.focus();
+        }, 100);
+    } else {
+        // Switch to Simple Mode
+        simpleDashboard.classList.remove('hidden');
+        simpleDashboard.classList.add('active');
+        terminalHeader.style.display = 'none';
+        terminalContainer.style.display = 'none';
+        if (mobileCommands) mobileCommands.style.display = 'none';
+        
+        toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Terminal Mode</span>';
+        toggleBtn.style.background = '#FF3333';
+        toggleBtn.style.borderColor = '#FF3333';
+        toggleBtn.style.color = '#FFFFFF';
+        
+        if (swipeHint) swipeHint.innerHTML = '<i class="fas fa-hand-pointer"></i> Swipe right for Terminal';
+        
+        // Simple, minimal animation
+        setTimeout(animateLanguageBars, 100);
+    }
+}
+
+// Animate Language Bars (simple, minimal)
+function animateLanguageBars() {
+    const langFills = document.querySelectorAll('.lang-fill');
+    langFills.forEach(fill => {
+        const width = fill.style.width;
+        fill.style.width = '0%';
+        setTimeout(() => {
+            fill.style.width = width;
+        }, 100);
     });
 }

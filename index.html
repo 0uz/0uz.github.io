@@ -3,231 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Interactive Terminal Portfolio</title>
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Backend Developer Terminal | Oğuzhan Duymaz</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-    <div id="terminal-header"></div>
-    <div id="terminal-container"></div>
+<body class="dark-mode">
+    <!-- View Toggle Button -->
+    <div id="view-toggle" class="view-toggle">
+        <button id="toggle-view-btn" onclick="toggleView()">
+            <i class="fas fa-terminal"></i>
+            <span>Terminal Mode</span>
+        </button>
+    </div>
+
+    <!-- Terminal Header (Hidden by default) -->
+    <div id="terminal-header" style="display: none;"></div>
+    
+    <!-- Terminal Container (Hidden by default) -->
+    <div id="terminal-container" style="display: none;"></div>
+    
+    <!-- Simple Mode Dashboard (Default View) -->
+    <div id="simple-dashboard" class="simple-dashboard active">
+        
+        <!-- Main Grid Container -->
+        <div class="swiss-container">
+            
+            <!-- Header Section -->
+            <header class="swiss-header">
+                <div class="header-grid">
+                    <div class="header-left">
+                        <span class="header-label">[DEV-001]</span>
+                        <h1 class="header-title">OĞUZHAN<br>DUYMAZ</h1>
+                    </div>
+                    <div class="header-right">
+                        <div class="status-box">
+                            <span class="status-indicator"></span>
+                            <span class="status-text">OPEN TO WORK</span>
+                        </div>
+                        <div class="contact-strip">
+                            <a href="tel:+905393369458" class="contact-link">TEL</a>
+                            <span class="divider">/</span>
+                            <a href="mailto:o.duymaz146@gmail.com" class="contact-link email">EMAIL</a>
+                            <span class="divider">/</span>
+                            <a href="https://oguzhanduymaz.com" target="_blank" class="contact-link">WEB</a>
+                            <span class="divider">/</span>
+                            <a href="https://github.com/0uz" target="_blank" class="contact-link">GH</a>
+                            <span class="divider">/</span>
+                            <a href="https://linkedin.com/in/oguzhanduymaz" target="_blank" class="contact-link">LI</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-meta">
+                    <span class="meta-item">LOCATION: ANKARA, TR</span>
+                    <span class="meta-item">ROLE: BACKEND DEV</span>
+                    <span class="meta-item">EXP: 4+ YEARS</span>
+                </div>
+            </header>
+
+            <!-- Data Grid -->
+            <div class="data-grid">
+                
+                <!-- Experience Panel (ÖNEMLİ) -->
+                <section class="data-panel experience-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">01</span>
+                        <h2 class="panel-title">EXPERIENCE_LOG</h2>
+                    </div>
+                    <div class="exp-list">
+                        <div class="exp-item current">
+                            <div class="exp-header">
+                                <span class="exp-role">SOFTWARE DEVELOPER</span>
+                                <span class="exp-period">MAY 2022—PRESENT</span>
+                            </div>
+                            <div class="exp-company">SAHIBINDEN.COM</div>
+                            <div class="exp-location">ISTANBUL, TURKEY</div>
+                            <p class="exp-desc">High-traffic backend services serving millions of daily active users. Microservices transformation from monolithic legacy systems. API optimization and observability stack implementation (Prometheus, Grafana, OpenTelemetry).</p>
+                            <div class="exp-tags">
+                                <span>JAVA</span>
+                                <span>KOTLIN</span>
+                                <span>SPRING BOOT</span>
+                                <span>KUBERNETES</span>
+                                <span>KAFKA</span>
+                            </div>
+                        </div>
+                        <div class="exp-item">
+                            <div class="exp-header">
+                                <span class="exp-role">SOFTWARE DEV [PART-TIME]</span>
+                                <span class="exp-period">FEB 2022—MAY 2022</span>
+                            </div>
+                            <div class="exp-company">HITIT BILGISAYAR</div>
+                            <div class="exp-location">ISTANBUL, TURKEY</div>
+                            <p class="exp-desc">Enterprise-grade airline systems with high-reliability requirements. Unit and integration tests for core business modules.</p>
+                            <div class="exp-tags">
+                                <span>JAVA</span>
+                                <span>ENTERPRISE SYSTEMS</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Project Panel (ÖNEMLİ) -->
+                <section class="data-panel project-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">02</span>
+                        <h2 class="panel-title">PROJECT_01</h2>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-header-row">
+                            <h3 class="project-name"><a href="https://itirafapp.com" target="_blank" style="color: inherit; text-decoration: none;">ITIRAFAPP.COM</a></h3>
+                            <span class="project-status">[LIVE]</span>
+                        </div>
+                        <div class="project-period">2024—PRESENT</div>
+                        <p class="project-desc">Production-ready social platform with real-time user interactions. Polyglot microservices architecture.</p>
+                        <div class="project-section">
+                            <h4 class="section-title">BACKEND</h4>
+                            <div class="project-tech-list">
+                                <span>SPRING BOOT</span>
+                                <span>GO</span>
+                                <span>WEBSOCKET</span>
+                                <span>POSTGRESQL</span>
+                                <span>REDIS</span>
+                                <span>MICROSERVICES</span>
+                            </div>
+                        </div>
+                        <div class="project-section">
+                            <h4 class="section-title">OBSERVABILITY</h4>
+                            <div class="project-tech-list">
+                                <span>OPENTELEMETRY COLLECTOR</span>
+                                <span>PROMETHEUS</span>
+                                <span>GRAFANA</span>
+                                <span>DISTRIBUTED TRACING</span>
+                            </div>
+                        </div>
+                        <div class="project-section">
+                            <h4 class="section-title">CI/CD</h4>
+                            <div class="project-tech-list">
+                                <span>GITHUB ACTIONS</span>
+                                <span>DOCKER</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tech Stack Panel (ÖNEMLİ) -->
+                <section class="data-panel stack-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">03</span>
+                        <h2 class="panel-title">TECH_STACK</h2>
+                    </div>
+                    <div class="stack-grid">
+                        <div class="stack-category">
+                            <h3 class="stack-cat-title">FRAMEWORKS</h3>
+                            <ul class="stack-list">
+                                <li>SPRING BOOT</li>
+                                <li>SPRING SECURITY</li>
+                                <li>SPRING CLOUD</li>
+                                <li>HIBERNATE</li>
+                            </ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3 class="stack-cat-title">DATA</h3>
+                            <ul class="stack-list">
+                                <li>POSTGRESQL</li>
+                                <li>MYSQL</li>
+                                <li>MONGODB</li>
+                                <li>REDIS</li>
+                                <li>ELASTICSEARCH</li>
+                            </ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3 class="stack-cat-title">ARCHITECTURE</h3>
+                            <ul class="stack-list">
+                                <li>KAFKA</li>
+                                <li>GRPC</li>
+                                <li>REST</li>
+                                <li>MICROSERVICES</li>
+                            </ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3 class="stack-cat-title">DEVOPS</h3>
+                            <ul class="stack-list">
+                                <li>DOCKER</li>
+                                <li>GITHUB ACTIONS</li>
+                                <li>JENKINS</li>
+                                <li>KUBERNETES</li>
+                            </ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3 class="stack-cat-title">OBSERVABILITY</h3>
+                            <ul class="stack-list">
+                                <li>PROMETHEUS</li>
+                                <li>GRAFANA</li>
+                                <li>LOKI</li>
+                                <li>TEMPO</li>
+                                <li>OPENTELEMETRY</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Languages Panel -->
+                <section class="data-panel languages-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">04</span>
+                        <h2 class="panel-title">LANGUAGES</h2>
+                    </div>
+                    <div class="language-list">
+                        <div class="lang-item">
+                            <span class="lang-name">JAVA</span>
+                            <div class="lang-bar">
+                                <div class="lang-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">KOTLIN</span>
+                            <div class="lang-bar">
+                                <div class="lang-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">GO</span>
+                            <div class="lang-bar">
+                                <div class="lang-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">PYTHON</span>
+                            <div class="lang-bar">
+                                <div class="lang-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">SQL</span>
+                            <div class="lang-bar">
+                                <div class="lang-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Education Panel -->
+                <section class="data-panel education-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">05</span>
+                        <h2 class="panel-title">EDUCATION</h2>
+                    </div>
+                    <div class="edu-block">
+                        <div class="edu-institution">TURKISH AERONAUTICAL ASSOCIATION UNIVERSITY</div>
+                        <div class="edu-degree">B.SC. COMPUTER ENGINEERING</div>
+                        <div class="edu-period">2017—2022</div>
+                        <div class="edu-stats">
+                            <span class="edu-gpa">VALEDICTORIAN</span>
+                            <span class="edu-rank">FACULTY 3RD</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Languages Spoken Panel -->
+                <section class="data-panel spoken-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">06</span>
+                        <h2 class="panel-title">LANGUAGES_SPOKEN</h2>
+                    </div>
+                    <div class="spoken-list">
+                        <div class="spoken-item">
+                            <span class="spoken-lang">TURKISH</span>
+                            <span class="spoken-level">[NATIVE]</span>
+                        </div>
+                        <div class="spoken-item">
+                            <span class="spoken-lang">ENGLISH</span>
+                            <span class="spoken-level">[PROFESSIONAL]</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA Panel -->
+                <section class="data-panel cta-panel">
+                    <div class="cta-block">
+                        <p class="cta-text">AVAILABLE FOR CHALLENGING PROJECTS</p>
+                        <a href="mailto:o.duymaz146@gmail.com" class="cta-button">
+                            <span class="cta-btn-text">INITIATE_CONTACT</span>
+                            <span class="cta-btn-arrow">→</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Achievements Panel (EN SON - daha az önemli) -->
+                <section class="data-panel achievements-panel">
+                    <div class="panel-header">
+                        <span class="panel-id">07</span>
+                        <h2 class="panel-title">ACHIEVEMENTS</h2>
+                    </div>
+                    <div class="achievements-list">
+                        <div class="achievement-item">
+                            <span class="achievement-marker">[01]</span>
+                            <span class="achievement-text">DEPARTMENT VALEDICTORIAN</span>
+                        </div>
+                        <div class="achievement-item">
+                            <span class="achievement-marker">[02]</span>
+                            <span class="achievement-text">3RD IN FACULTY</span>
+                        </div>
+                        <div class="achievement-item">
+                            <span class="achievement-marker">[03]</span>
+                            <span class="achievement-text">7TH / 1350+ HACKATHON</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="swiss-footer">
+                <span class="footer-id">// END OF DOCUMENT</span>
+                <span class="footer-hash">[UPDATED: 2025]</span>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- Mobile Commands -->
     <div id="mobile-commands" class="mobile-only"></div>
-    <!-- Load scripts in correct order -->
+    
+    <!-- Swipe Hint -->
+    <div class="swipe-hint" id="swipe-hint">
+        <i class="fas fa-hand-pointer"></i> Click top-right for Terminal Mode
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.min.js"></script>
-    <script>
-        // Terminal yardımcı fonksiyonları
-        let term;
-        
-        function createTerminal() {
-            term = new Terminal({
-                cursorBlink: true,
-                cursorStyle: 'block',
-                fontSize: 14,
-                fontFamily: 'Consolas, monospace',
-                theme: {
-                    background: '#000',
-                    foreground: '#fff',
-                },
-                convertEol: true,
-                wordWrap: true,
-                allowTransparency: true
-            });
-
-            // Web Links eklentisini yükle
-            term.loadAddon(new WebLinksAddon());
-        }
-
-        function writeLine(text = '') {
-            const lines = text.split('\n');
-            lines.forEach((line, index) => {
-                if (index > 0) term.write('\r\n');
-                term.write('\x1b[38;5;252m' + line + '\x1b[0m');
-            });
-            term.write('\r\n');
-        }
-
-        function simulateLoading(message, duration = 1000) {
-            return new Promise(resolve => {
-                const frames = ['-', '\\', '|', '/'];
-                let i = 0;
-                term.write(message);
-                
-                const interval = setInterval(() => {
-                    term.write('\b' + frames[i++ % frames.length]);
-                }, 100);
-
-                setTimeout(() => {
-                    clearInterval(interval);
-                    term.write('\b \n');
-                    resolve();
-                }, duration);
-            });
-        }
-
-        // Terminal instance'ını oluştur
-        createTerminal();
-
-        // Terminal container'a bağla
-        term.open(document.getElementById('terminal-container'));
-
-        // Terminal boyutunu ayarla fonksiyonunu güncelle
-        function updateTerminalSize() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-
-            // Mobil cihazlar için font boyutunu ayarla
-            let fontSize = 14;
-            if (width <= 480) {
-                fontSize = 12;
-            } else if (width <= 768) {
-                fontSize = 13;
-            }
-
-            // Margin ve padding'leri hesaba kat
-            const margin = width <= 480 ? 10 : (width <= 768 ? 20 : 30);
-            const dims = {
-                cols: Math.floor((width - (margin * 2)) / (fontSize * 0.6)),
-                rows: Math.floor((height - (margin * 2)) / (fontSize * 1.2))
-            };
-
-            term.options.fontSize = fontSize;
-            term.resize(dims.cols, dims.rows);
-        }
-
-        // Pencere boyutu değiştiğinde terminal boyutunu güncelle
-        window.addEventListener('resize', updateTerminalSize);
-        updateTerminalSize();
-
-        // Komutları çalıştıran fonksiyon
-        function executeCommand(command) {
-            term.write(command + '\r\n');
-            const [cmd, ...args] = command.split(' ');
-            if (commands.hasOwnProperty(cmd)) {
-                commands[cmd](args);
-            } else {
-                writeLine(`Command not found: ${cmd}`);
-                term.write(terminalState.prompt);
-            }
-        }
-
-        // Mobil komut butonlarını güncelle
-        function updateMobileCommands() {
-            const mobileCommands = document.getElementById('mobile-commands');
-            mobileCommands.innerHTML = '';
-
-            const buttons = [
-            'profile',
-            'experience',
-            'projects',
-            'links',
-            'clear'
-            ];
-            
-            buttons.forEach(btn => {
-            const button = document.createElement('button');
-            button.textContent = btn;
-            button.onclick = () => executeCommand('curl localhost:8080/api/' + (btn === 'clear' ? '' : btn));
-            mobileCommands.appendChild(button);
-            });
-        }
-
-        // Terminal giriş/çıkış yönetimi
-        term.onKey(({ key, domEvent }) => {
-            const ev = domEvent;
-            const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
-
-            if (ev.keyCode === 9) { // Tab
-                ev.preventDefault();
-                const completedLine = handleTabCompletion(terminalState.currentLine);
-                if (completedLine !== terminalState.currentLine) {
-                    terminalState.currentLine = completedLine;
-                    terminalState.cursorPosition = completedLine.length;
-                    refreshLine();
-                }
-            }
-            else if (ev.keyCode === 13) { // Enter
-                term.write('\r\n');
-                const command = terminalState.currentLine.trim();
-                
-                if (command) {
-                    addToHistory(command);
-                    const [cmd, ...args] = command.toLowerCase().split(' ');
-                    
-                    if (commands.hasOwnProperty(cmd)) {
-                        try {
-                            Promise.resolve(commands[cmd](args)).finally(() => {
-                                terminalState.currentLine = '';
-                                terminalState.cursorPosition = 0;
-                                term.write('\r\n' + terminalState.prompt);
-                            });
-                        } catch (error) {
-                            writeLine('Error executing command: ' + error);
-                            term.write(terminalState.prompt);
-                        }
-                    } else {
-                        writeLine(`Command not found: ${cmd}`);
-                        writeLine('Type "help" for available commands');
-                        term.write(terminalState.prompt);
-                    }
-                } else {
-                    term.write(terminalState.prompt);
-                }
-
-                terminalState.currentLine = '';
-                terminalState.cursorPosition = 0;
-                terminalState.historyIndex = -1;
-                updateMobileCommands();
-            }
-            else if (ev.keyCode === 8) { // Backspace
-                if (terminalState.cursorPosition > 0) {
-                    terminalState.currentLine = 
-                        terminalState.currentLine.slice(0, terminalState.cursorPosition - 1) + 
-                        terminalState.currentLine.slice(terminalState.cursorPosition);
-                    terminalState.cursorPosition--;
-                    refreshLine();
-                }
-            }
-            else if (ev.keyCode === 37) { // Sol ok
-                if (terminalState.cursorPosition > 0) {
-                    terminalState.cursorPosition--;
-                    term.write('\x1b[D');
-                }
-            }
-            else if (ev.keyCode === 39) { // Sağ ok
-                if (terminalState.cursorPosition < terminalState.currentLine.length) {
-                    terminalState.cursorPosition++;
-                    term.write('\x1b[C');
-                }
-            }
-            else if (ev.keyCode === 38) { // Yukarı ok
-                if (terminalState.historyIndex < terminalState.commandHistory.length - 1) {
-                    terminalState.historyIndex++;
-                    terminalState.currentLine = terminalState.commandHistory[terminalState.historyIndex];
-                    terminalState.cursorPosition = terminalState.currentLine.length;
-                    refreshLine();
-                }
-            }
-            else if (ev.keyCode === 40) { // Aşağı ok
-                if (terminalState.historyIndex > -1) {
-                    terminalState.historyIndex--;
-                    terminalState.currentLine = terminalState.historyIndex >= 0 
-                        ? terminalState.commandHistory[terminalState.historyIndex]
-                        : '';
-                    terminalState.cursorPosition = terminalState.currentLine.length;
-                    refreshLine();
-                }
-            }
-            else if (printable && key.length === 1) {
-                terminalState.currentLine = 
-                    terminalState.currentLine.slice(0, terminalState.cursorPosition) +
-                    key +
-                    terminalState.currentLine.slice(terminalState.cursorPosition);
-                terminalState.cursorPosition++;
-                refreshLine();
-                updateMobileCommands();
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="terminal-config.js"></script>
     <script src="commands.js"></script>
     <script src="terminal.js"></script>
 </body>

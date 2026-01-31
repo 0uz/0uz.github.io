@@ -5,12 +5,13 @@ let runningApps = {
 };
 
 const commandCompletions = {
-    'curl': ['localhost:8080/api/profile', 'localhost:8080/api/experience', 'localhost:8080/api/projects', 'localhost:8080/api/links'],
-    'docker': ['run -d springapp', 'run -d goapp', 'ps'],
+    'curl': ['localhost:8080/api/profile', 'localhost:8080/api/experience', 'localhost:8080/api/projects', 'localhost:8080/api/links', 'localhost:8080/api/health', 'localhost:8080/api/metrics'],
+    'docker': ['compose up', 'run -d springapp', 'run -d goapp', 'ps'],
     'psql': ['-h localhost -U postgres -d portfolio'],
     'redis-cli': ['ping', 'monitor', 'info'],
     'kafka-topics': ['--list'],
-    'git': ['log']
+    'git': ['log'],
+    'sudo': ['make me a coffee']
 };
 
 const fileSystem = {
@@ -59,6 +60,35 @@ function getCurrentDate() {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
+    });
+}
+
+// writeLine fonksiyonu - terminal output helper
+function writeLine(text = '') {
+    const lines = text.split('\n');
+    lines.forEach((line, index) => {
+        if (index > 0) term.write('\r\n');
+        term.write('\x1b[38;5;252m' + line + '\x1b[0m');
+    });
+    term.write('\r\n');
+}
+
+// simulateLoading fonksiyonu - loading animation
+function simulateLoading(message, duration = 1000) {
+    return new Promise(resolve => {
+        const frames = ['-', '\\', '|', '/'];
+        let i = 0;
+        term.write(message);
+        
+        const interval = setInterval(() => {
+            term.write('\b' + frames[i++ % frames.length]);
+        }, 100);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            term.write('\b \n');
+            resolve();
+        }, duration);
     });
 }
 
@@ -449,26 +479,338 @@ const commands = {
         term.write('\x1b[H');
     },
 
+    // Fun & Interactive Commands
+    'typing': async () => {
+        const code = `
+@SpringBootApplication
+public class AwesomeDeveloper {
+    
+    @Autowired
+    private CoffeeService coffeeService;
+    
+    @PostConstruct
+    public void init() {
+        System.out.println("Ready to ship production code!");
+    }
+    
+    public void solveProblems() {
+        while (bugsExist()) {
+            drinkCoffee();
+            writeCleanCode();
+            deployToProd();
+        }
+    }
+}`;
+        writeLine('\x1b[1m\x1b[38;5;82mWriting production code...\x1b[0m\n');
+        for (let i = 0; i < code.length; i++) {
+            term.write('\x1b[38;5;252m' + code[i] + '\x1b[0m');
+            await new Promise(r => setTimeout(r, 30));
+        }
+        writeLine('\n\n\x1b[1m\x1b[38;5;82m✓ Code compiled successfully!\x1b[0m');
+        writeLine('\x1b[38;5;214mReady to deploy to production\x1b[0m');
+    },
+
+    'benchmark': async () => {
+        writeLine('\x1b[1m\x1b[38;5;81mRunning performance benchmark...\x1b[0m\n');
+        const tests = [
+            { name: 'REST API Latency', metric: '45ms', score: 95 },
+            { name: 'Database Queries/sec', metric: '12,500', score: 92 },
+            { name: 'Cache Hit Ratio', metric: '97.8%', score: 98 },
+            { name: 'Concurrent Users', metric: '50,000', score: 94 },
+            { name: 'Memory Usage', metric: '385MB', score: 89 }
+        ];
+        
+        for (const test of tests) {
+            await simulateLoading(`Testing ${test.name} `, 600);
+            const bar = '█'.repeat(Math.floor(test.score / 5)) + '░'.repeat(20 - Math.floor(test.score / 5));
+            writeLine(`\x1b[38;5;87m${test.name.padEnd(25)}\x1b[0m [\x1b[38;5;82m${bar}\x1b[0m] \x1b[1m${test.metric}\x1b[0m`);
+        }
+        
+        writeLine('\n\x1b[1m\x1b[38;5;82m✓ All benchmarks passed!\x1b[0m');
+        writeLine('\x1b[38;5;214mSystem ready for high-scale production load\x1b[0m');
+    },
+
+    'monitor': async () => {
+        writeLine('\x1b[1m\x1b[38;5;81mReal-time System Monitor\x1b[0m');
+        writeLine('Press Ctrl+C to exit\n');
+        
+        const metrics = [
+            { label: 'CPU Usage', color: 82, getValue: () => (Math.random() * 30 + 20).toFixed(1) },
+            { label: 'Memory', color: 214, getValue: () => (Math.random() * 200 + 300).toFixed(0) },
+            { label: 'Active Connections', color: 87, getValue: () => Math.floor(Math.random() * 500 + 1000) },
+            { label: 'Requests/sec', color: 213, getValue: () => Math.floor(Math.random() * 200 + 800) }
+        ];
+        
+        let iterations = 0;
+        const interval = setInterval(() => {
+            if (iterations >= 10) {
+                clearInterval(interval);
+                writeLine('\n\x1b[38;5;82mMonitoring session ended\x1b[0m');
+                term.write(terminalState.prompt);
+                return;
+            }
+            
+            const timestamp = getCurrentTimestamp();
+            let line = `\x1b[38;5;244m${timestamp}\x1b[0m  `;
+            
+            metrics.forEach(m => {
+                const value = m.getValue();
+                const unit = m.label === 'Memory' ? 'MB' : (m.label === 'CPU Usage' ? '%' : '');
+                line += `\x1b[38;5;${m.color}m${m.label}: ${value}${unit}\x1b[0m  `;
+            });
+            
+            term.write(line + '\r\n');
+            iterations++;
+        }, 800);
+        
+        return new Promise(resolve => setTimeout(() => resolve(), 9000));
+    },
+
+    'matrix': async () => {
+        writeLine('\x1b[1m\x1b[38;5;82mEntering the Matrix...\x1b[0m');
+        writeLine('\x1b[38;5;244m(Press any key to exit)\x1b[0m\n');
+        
+        const chars = '0123456789ABCDEF';
+        const lines = 15;
+        const cols = 40;
+        let matrixRunning = true;
+        
+        // Key handler to stop matrix
+        const keyHandler = ({ domEvent }) => {
+            matrixRunning = false;
+            domEvent.preventDefault();
+        };
+        
+        // Attach temporary key handler
+        const disposable = term.onKey(keyHandler);
+        
+        let frame = 0;
+        while (matrixRunning && frame < 200) {
+            let output = '';
+            for (let i = 0; i < lines; i++) {
+                for (let j = 0; j < cols; j++) {
+                    if (Math.random() > 0.7) {
+                        output += `\x1b[38;5;${Math.floor(Math.random() * 6 + 22)}m${chars[Math.floor(Math.random() * chars.length)]}\x1b[0m`;
+                    } else {
+                        output += ' ';
+                    }
+                }
+                output += '\r\n';
+            }
+            term.write(output);
+            
+            // Check every 10 frames if we should continue
+            frame++;
+            await new Promise(r => setTimeout(r, 80));
+        }
+        
+        // Clean up
+        disposable.dispose();
+        
+        term.write('\r\n');
+        writeLine('\x1b[1m\x1b[38;5;82mMatrix exited. Welcome back to reality.\x1b[0m');
+    },
+
+    'celebrate': async () => {
+        writeLine('\x1b[1m\x1b[38;5;214m🎉 Celebration mode activated! 🎉\x1b[0m');
+        
+        // Trigger confetti
+        if (typeof confetti !== 'undefined') {
+            const duration = 3000;
+            const end = Date.now() + duration;
+            
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#00d4ff', '#ff6b6b', '#ffd93d', '#51cf66']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#00d4ff', '#ff6b6b', '#ffd93d', '#51cf66']
+                });
+                
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+        
+        writeLine('\x1b[38;5;82m✓ You just witnessed my backend skills!\x1b[0m');
+        writeLine('\x1b[38;5;87mReady to bring this energy to your team!\x1b[0m');
+    },
+
+    'coffee': async () => {
+        const frames = [
+            '     )  (',
+            '    (   ) )',
+            '     ) ( (',
+            '   _______)_',
+            ' .`---------|',
+            ' (  /       |',
+            '  `-`-------`'
+        ];
+        
+        writeLine('\x1b[38;5;214mBrewing coffee for optimal coding performance...\x1b[0m\n');
+        
+        for (let i = 0; i < 3; i++) {
+            frames.forEach((frame, idx) => {
+                setTimeout(() => {
+                    term.write('\r\x1b[K' + '\x1b[38;5;94m' + frame + '\x1b[0m');
+                }, idx * 200);
+            });
+            await new Promise(r => setTimeout(r, frames.length * 200 + 300));
+        }
+        
+        writeLine('\n\n\x1b[1m\x1b[38;5;82m☕ Coffee ready! Productivity increased by 9000%\x1b[0m');
+    },
+
+    'hack': async () => {
+        writeLine('\x1b[1m\x1b[38;5;196mWARNING: Hollywood hacker mode engaged!\x1b[0m\n');
+        
+        const hackLines = [
+            'Bypassing mainframe firewall...',
+            'Decrypting AES-256 encryption...',
+            'Establishing backdoor connection...',
+            'Downloading confidential data...',
+            'Uploading virus to enemy server...',
+            'Overriding security protocols...',
+            'Access granted to Pentagon servers...',
+            'I\'m in! 🕶️'
+        ];
+        
+        for (const line of hackLines) {
+            await simulateLoading(line + ' ', 400);
+            writeLine(`\x1b[38;5;82m[OK]\x1b[0m ${line}`);
+        }
+        
+        writeLine('\n\x1b[1m\x1b[38;5;82mJust kidding! Real hacking takes much more skill and time 😄\x1b[0m');
+        writeLine('\x1b[38;5;87mBut I can build secure systems that prevent this!\x1b[0m');
+    },
+
+    'ascii': async () => {
+        writeLine('\x1b[1m\x1b[38;5;81mGitHub Contribution Graph (Last Year)\x1b[0m\n');
+        
+        const days = ['Mon', 'Wed', 'Fri'];
+        const levels = ['░', '▒', '▓', '█'];
+        
+        writeLine('        Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec');
+        
+        for (let day = 0; day < 7; day++) {
+            let line = (day % 2 === 0 ? days[day/2] || '   ' : '   ') + '  ';
+            for (let week = 0; week < 52; week++) {
+                const activity = Math.random();
+                let char;
+                if (activity < 0.5) char = levels[0];
+                else if (activity < 0.7) char = '\x1b[38;5;28m' + levels[1] + '\x1b[0m';
+                else if (activity < 0.85) char = '\x1b[38;5;34m' + levels[2] + '\x1b[0m';
+                else char = '\x1b[38;5;82m' + levels[3] + '\x1b[0m';
+                line += char;
+            }
+            writeLine(line);
+        }
+        
+        writeLine('\n\x1b[38;5;244mLess \x1b[38;5;28m▒\x1b[38;5;34m▓\x1b[38;5;82m█\x1b[38;5;244m More\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;82m1000+ commits in the last year!\x1b[0m');
+    },
+
+    'whoami': () => {
+        writeLine('\x1b[1m\x1b[38;5;87mOğuzhan Duymaz\x1b[0m - Backend Developer Extraordinaire');
+        writeLine('\x1b[38;5;252m----------------------------------------\x1b[0m');
+        writeLine('\x1b[38;5;82mSpecialties:\x1b[0m');
+        writeLine('  • High-scale distributed systems');
+        writeLine('  • Microservices architecture');
+        writeLine('  • Performance optimization');
+        writeLine('  • Coffee consumption');
+        writeLine('\x1b[38;5;82mMission:\x1b[0m Building robust backends that scale');
+        writeLine('\x1b[38;5;214mFun fact: This terminal is running entirely in your browser!\x1b[0m');
+    },
+
+    'sudo': async (args) => {
+        if (args.join(' ') === 'make me a coffee') {
+            writeLine('\x1b[38;5;196m[sudo]\x1b[0m password for root: \x1b[38;5;252m********\x1b[0m');
+            await new Promise(r => setTimeout(r, 800));
+            writeLine('\x1b[38;5;82mAccess granted. Elevating privileges...\x1b[0m\n');
+            await new Promise(r => setTimeout(r, 500));
+            
+            const coffeeArt = [
+                '                    (    ',
+                '                      )  ',
+                '              (       )  ',
+                '               )     (   ',
+                '             (       )   ',
+                '          ___(_______)___',
+                '          |  COFFEE     |',
+                '          |   FOR ROOT  |',
+                '          |_____________|',
+                '           (   )   (   ) ',
+                '            |_|     |_|  '
+            ];
+            
+            coffeeArt.forEach(line => {
+                writeLine('\x1b[38;5;94m' + line + '\x1b[0m');
+            });
+            
+            writeLine('\n\x1b[1m\x1b[38;5;82m☕ Premium coffee served with root privileges!\x1b[0m');
+            writeLine('\x1b[38;5;214mOnly the best for admins 😎\x1b[0m');
+        } else {
+            writeLine('\x1b[38;5;196msudo: unknown command\x1b[0m');
+            writeLine('\x1b[38;5;252mTry: sudo make me a coffee\x1b[0m');
+        }
+    },
+
     help: () => {
-        writeLine('\x1b[1m\x1b[38;5;81mAvailable Commands:\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;81m╔══════════════════════════════════════════════════════════════╗\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;81m║           Backend Developer Terminal v2.0.0                  ║\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;81m╚══════════════════════════════════════════════════════════════╝\x1b[0m\n');
+        
+        writeLine('\x1b[1m\x1b[38;5;214m🚀 Application Control:\x1b[0m');
+        writeLine('    docker compose up       Start all infrastructure containers');
+        writeLine('    docker run -d springapp Start Spring Boot application');
+        writeLine('    docker run -d goapp     Start Go WebSocket server');
+        writeLine('    docker ps               List running containers');
         writeLine('');
-        writeLine('\x1b[1m\x1b[38;5;214mApplication Control:\x1b[0m');
-        writeLine('    docker run -d springapp    Start Spring Boot application');
-        writeLine('    docker run -d goapp       Start Go WebSocket server');
-        writeLine('    docker ps                 List running containers');
-        writeLine('');
-        writeLine('\x1b[1m\x1b[38;5;214mAPI Endpoints:\x1b[0m');
+        
+        writeLine('\x1b[1m\x1b[38;5;214m📡 API Endpoints:\x1b[0m');
         writeLine('    curl localhost:8080/api/profile    Show CV and profile');
         writeLine('    curl localhost:8080/api/experience Show work experience');
         writeLine('    curl localhost:8080/api/projects   Show project details');
         writeLine('    curl localhost:8080/api/links      Show social links');
+        writeLine('    curl localhost:8080/api/health     System health check');
         writeLine('');
-        writeLine('\x1b[1m\x1b[38;5;214mOther Tools:\x1b[0m');
-        writeLine('    psql -h localhost         List projects from database');
-        writeLine('    redis-cli                 Interactive Redis client');
-        writeLine('    kafka-topics --list       Show Kafka topics');
-        writeLine('    git log                   Show development history');
-        writeLine('    clear                     Clear terminal screen');
+        
+        writeLine('\x1b[1m\x1b[38;5;214m🛠️ Database & Infrastructure Tools:\x1b[0m');
+        writeLine('    psql -h localhost         PostgreSQL client');
+        writeLine('    redis-cli                 Redis interactive client');
+        writeLine('    kafka-topics --list       List Kafka topics');
+        writeLine('    git log                   Show commit history');
+        writeLine('');
+        
+        writeLine('\x1b[1m\x1b[38;5;82m✨ Special Commands (Try these!):\x1b[0m');
+        writeLine('    benchmark       Run performance benchmarks');
+        writeLine('    monitor         Real-time system monitoring');
+        writeLine('    typing          Watch me write code in real-time');
+        writeLine('    matrix          Enter the Matrix (visual effect)');
+        writeLine('    celebrate       Celebration mode! 🎉');
+        writeLine('    coffee          Brew some virtual coffee ☕');
+        writeLine('    hack            Hollywood hacker simulation');
+        writeLine('    ascii           GitHub contribution graph');
+        writeLine('    whoami          About this developer');
+        writeLine('');
+        
+        writeLine('\x1b[1m\x1b[38;5;87m💡 Tips:\x1b[0m');
+        writeLine('    • Press Tab for command auto-completion');
+        writeLine('    • Use arrow keys for command history');
+        writeLine('    • Click "Simple Mode" button for HR-friendly view');
+        writeLine('    • Try "docker compose up" to start the full stack!');
+        writeLine('');
+        
+        writeLine('\x1b[38;5;214m🎯 Quick Start: Type "docker compose up" to begin the demo\x1b[0m');
         return Promise.resolve();
     }
 };
