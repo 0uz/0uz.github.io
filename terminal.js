@@ -491,8 +491,7 @@ function updateMobileCommands() {
         { text: 'help', cmd: 'help', icon: '?', label: 'Show help command' },
         { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: 'P', label: 'Fetch profile data' },
         { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: 'PRJ', label: 'Fetch projects data' },
-        { text: 'clear', cmd: 'clear', icon: 'CLR', label: 'Clear terminal' },
-        { text: 'htop', cmd: 'htop', icon: 'SYS', label: 'Show system monitor' }
+        { text: 'clear', cmd: 'clear', icon: 'CLR', label: 'Clear terminal' }
     ];
 
     commands.forEach(({ text, cmd, icon, label }) => {
