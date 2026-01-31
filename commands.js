@@ -560,7 +560,7 @@ const commands = {
         writeLine('    docker ps               List running containers');
         writeLine('');
         
-        writeLine('\x1b[1m\x1b[38;5;214m📡 API Endpoints:\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;214mAPI Endpoints:\x1b[0m');
         writeLine('    curl localhost:8080/api/profile    Show CV and profile');
         writeLine('    curl localhost:8080/api/experience Show work experience');
         writeLine('    curl localhost:8080/api/projects   Show project details');
@@ -568,18 +568,18 @@ const commands = {
         writeLine('    curl localhost:8080/api/health     System health check');
         writeLine('');
         
-        writeLine('\x1b[1m\x1b[38;5;214m🛠️ Database & Infrastructure Tools:\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;214mDatabase & Infrastructure Tools:\x1b[0m');
         writeLine('    psql -h localhost         PostgreSQL client');
         writeLine('    redis-cli                 Redis interactive client');
         writeLine('    kafka-topics --list       List Kafka topics');
         writeLine('    git log                   Show commit history');
         writeLine('');
         
-        writeLine('\x1b[1m\x1b[38;5;82m⚡ System Monitor:\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;82mSystem Monitor:\x1b[0m');
         writeLine('    htop                      Real-time system resource monitor');
         writeLine('');
         
-        writeLine('\x1b[1m\x1b[38;5;87m💡 Tips:\x1b[0m');
+        writeLine('\x1b[1m\x1b[38;5;87mTips:\x1b[0m');
         writeLine('    • Press Tab for command auto-completion');
         writeLine('    • Use arrow keys for command history');
         writeLine('    • Click "Simple Mode" button for HR-friendly view');
@@ -587,7 +587,7 @@ const commands = {
         writeLine('    • Try "htop" for live system monitoring');
         writeLine('');
         
-        writeLine('\x1b[38;5;214m🎯 Quick Start: Type "docker compose up" to begin the demo\x1b[0m');
+        writeLine('\x1b[38;5;214mQuick Start: Type "docker compose up" to begin the demo\x1b[0m');
         return Promise.resolve();
     }
 };

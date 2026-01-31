@@ -477,7 +477,9 @@ body.dark-mode {
 .lang-fill {
     height: 100%;
     background: var(--text-primary);
-    transition: width 0.5s var(--transition-fast);
+    transition: transform 0.5s var(--transition-fast);
+    will-change: transform;
+    transform-origin: left;
 }
 
 /* ============================================
@@ -862,42 +864,44 @@ body.dark-mode {
 
 @media (max-width: 768px) {
     .mobile-only {
-        display: flex;
+        display: flex !important; /* Force display */
         justify-content: center;
         align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
+        gap: 8px;
+        padding: 10px 12px;
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         width: 100%;
-        min-height: 60px; /* Increased for better touch targets */
-        z-index: 1000;
+        min-height: 56px;
+        z-index: 9999; /* High z-index to stay on top */
         background: var(--bg-secondary);
         border-top: 3px solid var(--border-color);
-        overflow-x: auto; /* Allow horizontal scroll if needed */
+        overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        box-sizing: border-box;
     }
 
     .mobile-only button {
         background: var(--bg-primary);
         color: var(--text-primary);
         border: 2px solid var(--border-color);
-        padding: 10px 14px;
+        padding: 8px 12px;
         font-family: var(--font-mono);
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
         cursor: pointer;
         transition: var(--transition-fast);
         min-height: 44px;
         min-width: 44px;
-        flex-shrink: 0; /* Prevent buttons from shrinking */
-        border-radius: 0; /* Keep design consistent */
+        flex-shrink: 0;
+        border-radius: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 4px;
+        white-space: nowrap;
     }
 
     .mobile-only button:hover,
@@ -912,39 +916,6 @@ body.dark-mode {
     .mobile-only button:focus-visible {
         outline: 2px solid var(--accent-color);
         outline-offset: 2px;
-    }
-}
-
-/* ============================================
-   SWIPE HINT
-   ============================================ */
-.swipe-hint {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .swipe-hint {
-        display: block;
-        position: fixed;
-        bottom: 60px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--text-primary);
-        color: var(--bg-primary);
-        padding: 8px 16px;
-        font-family: var(--font-mono);
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        z-index: 999;
-        animation: fadeInOut 4s ease-in-out forwards;
-        pointer-events: none;
-    }
-    
-    @keyframes fadeInOut {
-        0% { opacity: 0; }
-        20% { opacity: 1; }
-        80% { opacity: 1; }
-        100% { opacity: 0; }
     }
 }
 
@@ -1098,9 +1069,14 @@ body.dark-mode {
     }
     
     .mobile-only button {
-        min-height: 44px; /* Ensure minimum touch target */
-        padding: 10px 14px;
-        font-size: 11px;
+        min-height: 40px;
+        min-width: 40px;
+        padding: 6px 10px;
+        font-size: 9px;
+    }
+    
+    .mobile-only button .btn-text {
+        display: none; /* Hide text on very small screens, show only icons */
     }
 }
 

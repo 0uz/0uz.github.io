@@ -297,20 +297,39 @@ function initializeTerminal() {
             if (typeof commands !== 'undefined' && commands.docker) {
                 commands.docker(['compose', 'up']).then(() => {
                     setTimeout(() => {
+                        // Check if mobile (narrow screen)
+                        const isMobile = window.innerWidth <= 768;
+                        
                         writeLine('\x1b[38;5;82m');
-                        writeLine('╔══════════════════════════════════════════════════════════════╗');
-                        writeLine('║              🚀 Environment Ready!                           ║');
-                        writeLine('║                                                              ║');
-                        writeLine('║  All services are now running:                               ║');
-                        writeLine('║    • PostgreSQL  (Port 5432)  ✓                              ║');
-                        writeLine('║    • Redis       (Port 6379)  ✓                              ║');
-                        writeLine('║    • Kafka       (Port 9092)  ✓                              ║');
-                        writeLine('║    • Spring Boot (Port 8080)  ✓                              ║');
-                        writeLine('║    • Go Service  (Port 8081)  ✓                              ║');
-                        writeLine('║                                                              ║');
-                        writeLine('║  Try: curl localhost:8080/api/profile                        ║');
-                        writeLine('║  Or type "help" to see all commands                          ║');
-                        writeLine('╚══════════════════════════════════════════════════════════════╝');
+                        if (isMobile) {
+                            // Compact version for mobile
+                            writeLine('╔════════════════════════════════════╗');
+                            writeLine('║     Environment Ready!             ║');
+                            writeLine('║                                    ║');
+                            writeLine('║  Services running:                 ║');
+                            writeLine('║  • PostgreSQL [OK]  • Redis [OK]  ║');
+                            writeLine('║  • Kafka [OK]       • Spring Boot [OK]  ║');
+                            writeLine('║  • Go Service [OK]                ║');
+                            writeLine('║                                    ║');
+                            writeLine('║  Try: curl localhost:8080/api/    ║');
+                            writeLine('║  Or type "help"                   ║');
+                            writeLine('╚════════════════════════════════════╝');
+                        } else {
+                            // Full version for desktop
+                            writeLine('╔══════════════════════════════════════════════════════════════╗');
+                            writeLine('║              Environment Ready!                              ║');
+                            writeLine('║                                                              ║');
+                            writeLine('║  All services are now running:                               ║');
+                            writeLine('║    • PostgreSQL  (Port 5432)  [OK]                           ║');
+                            writeLine('║    • Redis       (Port 6379)  [OK]                           ║');
+                            writeLine('║    • Kafka       (Port 9092)  [OK]                           ║');
+                            writeLine('║    • Spring Boot (Port 8080)  [OK]                           ║');
+                            writeLine('║    • Go Service  (Port 8081)  [OK]                           ║');
+                            writeLine('║                                                              ║');
+                            writeLine('║  Try: curl localhost:8080/api/profile                        ║');
+                            writeLine('║  Or type "help" to see all commands                          ║');
+                            writeLine('╚══════════════════════════════════════════════════════════════╝');
+                        }
                         writeLine('\x1b[0m');
                         term.write(terminalState.prompt);
                     }, 500);
@@ -469,11 +488,11 @@ function updateMobileCommands() {
     mobileCommands.setAttribute('aria-label', 'Quick terminal commands');
     
     const commands = [
-        { text: 'help', cmd: 'help', icon: '❓', label: 'Show help command' },
-        { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: '👤', label: 'Fetch profile data' },
-        { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: '🚀', label: 'Fetch projects data' },
-        { text: 'clear', cmd: 'clear', icon: '🧹', label: 'Clear terminal' },
-        { text: 'htop', cmd: 'htop', icon: '📊', label: 'Show system monitor' }
+        { text: 'help', cmd: 'help', icon: '?', label: 'Show help command' },
+        { text: 'profile', cmd: 'curl localhost:8080/api/profile', icon: 'P', label: 'Fetch profile data' },
+        { text: 'projects', cmd: 'curl localhost:8080/api/projects', icon: 'PRJ', label: 'Fetch projects data' },
+        { text: 'clear', cmd: 'clear', icon: 'CLR', label: 'Clear terminal' },
+        { text: 'htop', cmd: 'htop', icon: 'SYS', label: 'Show system monitor' }
     ];
 
     commands.forEach(({ text, cmd, icon, label }) => {
@@ -520,33 +539,21 @@ function handleSwipe() {
     }
 }
 
-// Swipe gesture support for mobile with passive listeners for better performance
-document.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-}, { passive: true });
-
-document.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-}, { passive: true });
+// Swipe gesture support removed - using button only for better UX
 
 // View Toggle Function
 function toggleView() {
-    console.log('toggleView called');
     const body = document.body;
     const terminalHeader = document.getElementById('terminal-header');
     const terminalContainer = document.getElementById('terminal-container');
     const simpleDashboard = document.getElementById('simple-dashboard');
     const mobileCommands = document.getElementById('mobile-commands');
     const toggleBtn = document.getElementById('toggle-view-btn');
-    const swipeHint = document.getElementById('swipe-hint');
     
     if (!simpleDashboard) {
         console.error('simple-dashboard element not found');
         return;
     }
-    
-    console.log('simpleDashboard active:', simpleDashboard.classList.contains('active'));
     
     if (simpleDashboard.classList.contains('active')) {
         // Switch to Terminal Mode
@@ -561,11 +568,10 @@ function toggleView() {
         initHeaderMonitor();
         
         toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Simple Mode</span>';
+        toggleBtn.setAttribute('aria-label', 'Switch to Simple Mode');
         toggleBtn.style.background = '#0A0A0A';
         toggleBtn.style.borderColor = '#0A0A0A';
         toggleBtn.style.color = '#FFFFFF';
-        
-        if (swipeHint) swipeHint.innerHTML = '<i class="fas fa-hand-pointer"></i> Swipe left for Simple Mode';
         
         // Terminal'i başlat ve yeniden boyutlandır
         setTimeout(() => {
@@ -585,11 +591,10 @@ function toggleView() {
         stopHeaderMonitor();
         
         toggleBtn.innerHTML = '<i class="fas fa-terminal"></i><span>Terminal Mode</span>';
+        toggleBtn.setAttribute('aria-label', 'Switch to Terminal Mode');
         toggleBtn.style.background = '#FF3333';
         toggleBtn.style.borderColor = '#FF3333';
         toggleBtn.style.color = '#FFFFFF';
-        
-        if (swipeHint) swipeHint.innerHTML = '<i class="fas fa-hand-pointer"></i> Swipe right for Terminal';
         
         // Simple, minimal animation
         setTimeout(animateLanguageBars, 100);
@@ -600,10 +605,12 @@ function toggleView() {
 function animateLanguageBars() {
     const langFills = document.querySelectorAll('.lang-fill');
     langFills.forEach(fill => {
-        const width = fill.style.width;
-        fill.style.width = '0%';
+        const targetWidth = fill.style.width || '100%';
+        // Use transform for GPU-accelerated animation
+        fill.style.transform = 'scaleX(0)';
+        fill.style.width = targetWidth; // Set the target width
         setTimeout(() => {
-            fill.style.width = width;
+            fill.style.transform = 'scaleX(1)';
         }, 100);
     });
 }
