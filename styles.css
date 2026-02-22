@@ -4,6 +4,10 @@
    ============================================ */
 
 /* CSS Reset & Base */
+html {
+    height: 100%;
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -82,17 +86,19 @@ body {
     margin: 0;
     padding: 0;
     background-color: var(--bg-primary);
-    height: 100vh;
+    min-height: 100vh;
+    min-height: -moz-available;
+    min-height: -webkit-fill-available;
+    min-height: fill-available;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     font-family: var(--font-mono);
-    font-size: 16px; /* Increased from 14px for better accessibility and iOS compatibility */
-    line-height: 1.6; /* Improved line height for readability */
+    font-size: 16px;
+    line-height: 1.6;
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-size-adjust: 100%; /* Prevent mobile font scaling */
+    text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
 }
 
@@ -116,6 +122,7 @@ body.dark-mode {
     right: 20px;
     z-index: 10000;
     animation: pulse-attention 2s ease-in-out infinite;
+    pointer-events: auto;
 }
 
 @keyframes pulse-attention {
@@ -159,6 +166,11 @@ body.dark-mode {
 /* ============================================
    TERMINAL STYLES
    ============================================ */
+body.terminal-mode {
+    overflow: hidden;
+    height: 100vh;
+}
+
 #terminal-header {
     background-color: #0A0A0A;
     margin: 20px 20px 0 20px;
@@ -169,10 +181,11 @@ body.dark-mode {
     min-height: 120px;
     max-height: 160px;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 #terminal-container {
-    flex: 1;
+    flex: 1 1 auto;
     background-color: #0A0A0A;
     margin: 0 20px 20px 20px;
     border-bottom-left-radius: 0;
@@ -180,6 +193,7 @@ body.dark-mode {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden;
 }
 
 .terminal {
@@ -210,10 +224,12 @@ body.dark-mode {
     overflow-x: hidden;
     background: var(--bg-primary);
     display: none;
+    height: 100%;
 }
 
 .simple-dashboard.active {
     display: block;
+    overflow-y: auto;
 }
 
 .simple-dashboard::-webkit-scrollbar {
@@ -985,18 +1001,20 @@ body.dark-mode {
 
 @media (max-width: 768px) {
     body {
-        font-size: 15px; /* Slightly smaller than desktop but still readable */
+        font-size: 15px;
+        overflow-x: hidden;
     }
     
     .view-toggle {
         top: 12px;
         right: 12px;
+        z-index: 10000;
     }
     
     #toggle-view-btn {
-        padding: 12px 16px; /* Increased touch target */
+        padding: 12px 16px;
         font-size: 11px;
-        min-height: 44px; /* Minimum touch target size */
+        min-height: 44px;
     }
     
     .header-grid {
@@ -1217,10 +1235,17 @@ body.dark-mode {
         max-height: 80px;
         margin: 10px 10px 0 10px;
         padding: 6px;
+        flex-shrink: 0;
     }
     
     #terminal-container {
-        margin: 0 10px 10px 10px;
+        margin: 0 10px 70px 10px;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+    
+    body.terminal-mode #terminal-container {
+        margin-bottom: 70px;
     }
 }
 
@@ -1230,10 +1255,17 @@ body.dark-mode {
         max-height: 70px;
         margin: 5px 5px 0 5px;
         padding: 5px;
+        flex-shrink: 0;
     }
     
     #terminal-container {
-        margin: 0 5px 5px 5px;
+        margin: 0 5px 70px 5px;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+    
+    body.terminal-mode #terminal-container {
+        margin-bottom: 70px;
     }
 }
 

@@ -558,6 +558,7 @@ function toggleView() {
     
     if (simpleDashboard.classList.contains('active')) {
         // Switch to Terminal Mode
+        body.classList.add('terminal-mode');
         simpleDashboard.classList.remove('active');
         simpleDashboard.classList.add('hidden');
         terminalHeader.style.display = 'block';
@@ -583,6 +584,7 @@ function toggleView() {
         }, 100);
     } else {
         // Switch to Simple Mode
+        body.classList.remove('terminal-mode');
         simpleDashboard.classList.remove('hidden');
         simpleDashboard.classList.add('active');
         terminalHeader.style.display = 'none';
