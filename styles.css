@@ -857,14 +857,18 @@ body.dark-mode {
    MOBILE COMMANDS
    ============================================ */
 .mobile-only {
-    display: none;
+    display: none !important;
     background: var(--bg-secondary);
     border-top: 3px solid var(--border-color);
 }
 
+.mobile-only.visible {
+    display: flex !important;
+}
+
 @media (max-width: 768px) {
     .mobile-only {
-        display: flex;
+        display: none !important;
         justify-content: center;
         align-items: center;
         gap: 8px;
@@ -881,6 +885,10 @@ body.dark-mode {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         box-sizing: border-box;
+    }
+    
+    .mobile-only.visible {
+        display: flex !important;
     }
     
     /* Hide mobile commands in simple mode */

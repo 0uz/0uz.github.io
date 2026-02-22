@@ -475,14 +475,16 @@ function updateMobileCommands() {
     if (!mobileCommands) return;
 
     const simpleDashboard = document.getElementById('simple-dashboard');
-    if (simpleDashboard && simpleDashboard.classList.contains('active')) {
-        mobileCommands.style.display = 'none';
+    const isMobile = window.innerWidth <= 768;
+    
+    if (!isMobile || (simpleDashboard && simpleDashboard.classList.contains('active'))) {
+        mobileCommands.classList.remove('visible');
         mobileCommands.setAttribute('aria-hidden', 'true');
         return;
     }
 
     mobileCommands.innerHTML = '';
-    mobileCommands.style.display = 'flex';
+    mobileCommands.classList.add('visible');
     mobileCommands.setAttribute('aria-hidden', 'false');
     mobileCommands.setAttribute('role', 'toolbar');
     mobileCommands.setAttribute('aria-label', 'Quick terminal commands');
@@ -588,7 +590,7 @@ function toggleView() {
         
         // Hide mobile commands
         if (mobileCommands) {
-            mobileCommands.style.display = 'none';
+            mobileCommands.classList.remove('visible');
             mobileCommands.innerHTML = '';
         }
         
@@ -646,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // In simple mode, ensure mobile commands are hidden
             if (mobileCommands) {
-                mobileCommands.style.display = 'none';
+                mobileCommands.classList.remove('visible');
                 mobileCommands.innerHTML = '';
             }
         }
